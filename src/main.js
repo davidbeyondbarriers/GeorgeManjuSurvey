@@ -8,7 +8,7 @@
  */
 
 import { track, setProfile } from './analytics/track.js'
-import { loadState, clearState } from './persistence/autosave.js'
+import { loadState, clearState, initSession } from './persistence/autosave.js'
 import { initHero } from './components/hero.js'
 import { initSurvey } from './engine/survey-engine.js'
 import { showSection, hideSection } from './engine/navigation.js'
@@ -54,6 +54,7 @@ motivCTA?.addEventListener('click', _enterSurvey, { once: true })
 
 // ── SURVEY INIT ───────────────────────────────────────────────────────────────
 async function _enterSurvey () {
+  initSession()   // creates DB session row with device/browser/UTM metadata
   await hideSection(motivationEl)
   showSection(surveyEl)
   surveyEl.scrollIntoView({ behavior: 'smooth' })

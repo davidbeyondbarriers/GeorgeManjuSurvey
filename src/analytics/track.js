@@ -8,6 +8,8 @@
  *   question_skip · drop_off · survey_complete · completion_time · device_type
  */
 
+import { logEvent } from '../persistence/autosave.js'
+
 const POSTHOG_KEY = import.meta.env?.VITE_POSTHOG_KEY
 
 let _ph = null
@@ -46,6 +48,9 @@ export function track (event, props = {}) {
   if (_ph) {
     _ph.capture(event, payload)
   }
+
+  // DB — server-side mirror via Netlify Function
+  logEvent(event, props)
 
   // Dev-mode logging
   if (import.meta.env?.DEV) {

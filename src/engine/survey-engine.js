@@ -6,7 +6,7 @@
  */
 
 import { track }           from '../analytics/track.js'
-import { saveState }       from '../persistence/autosave.js'
+import { saveState, saveResponse, updateProgress, completeSession } from '../persistence/autosave.js'
 import { transitionCard, announce, scrollToTop } from './navigation.js'
 import {
   getNextQuestion,
@@ -110,6 +110,7 @@ function _renderCurrentQuestion (dir = 'forward') {
   if (!question) return
 
   track('question_view', { question_id: question.id, question_type: question.type })
+  _state._questionRenderedAt = Date.now()
 
   const chapter = chapterForQuestion(question.id, _chapters)
 
@@ -151,20 +152,37 @@ function _renderCurrentQuestion (dir = 'forward') {
 // ─── ANSWER + NAVIGATION ──────────────────────────────────────────────────────
 
 function _handleAnswer (questionId, value) {
-  const prev = _state.responses[questionId]
-
+  const answerStart = _state._questionRenderedAt ?? Date.now()
   _state.responses[questionId] = value
 
   track('question_answer', { question_id: questionId, value_type: typeof value })
 
-  // Auto-advance for single-choice questions after a brief pause
   const question = _allQuestions.find(q => q.id === questionId)
+  const chapter  = chapterForQuestion(questionId, _chapters)
+
+  // Save answer to DB
+  saveResponse({
+    question_id:      questionId,
+    question_text:    question?.label   ?? null,
+    question_type:    (question?.type   ?? 'single_choice').replace('-', '_'),
+    chapter_id:       chapter?.id       ?? null,
+    chapter_title:    chapter?.title    ?? null,
+    answer_value:     Array.isArray(value) ? value.join(',') : String(value ?? ''),
+    answer_label:     null,
+    answer_numeric:   (question?.type === 'likert' || question?.type === 'rating') && !isNaN(Number(value))
+                        ? Number(value) : null,
+    answer_array:     Array.isArray(value) ? value : null,
+    is_skipped:       false,
+    time_to_answer_s: Math.round((Date.now() - answerStart) / 1000),
+    revision_count:   _state.responses[questionId] !== undefined ? 1 : 0
+  })
+
+  // Auto-advance for single-choice questions after a brief pause
   if (question?.type === 'single-choice') {
     setTimeout(() => _advance(), 320)
     return
   }
 
-  // For all others: just save + update progress (user presses Next)
   _save()
   _updateProgress()
 }
@@ -189,6 +207,13 @@ function _advance () {
   _state.chapterId  = nextChapter?.id ?? _state.chapterId
 
   _save()
+
+  // Sync progress to DB after each navigation step
+  updateProgress({
+    currentChapter:  _state.chapterId,
+    currentQuestion: _state.questionId,
+    progressPct:     calcProgress(_allQuestions, _state.responses)
+  })
 
   if (nextChapter && currentChapter && nextChapter.id !== currentChapter.id) {
     // Show chapter intro for new chapter
@@ -236,6 +261,7 @@ function _completeSurvey () {
     questions_answered: Object.values(_state.responses).filter(v => v !== null && v !== '').length
   })
 
+  completeSession()  // marks DB session completed + clears localStorage
   _save()
 
   _setProgressBar(100)
