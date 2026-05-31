@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@netlify/database": "^1.0.0",
+    "@neondatabase/serverless": "^0.10.4",
     "three": "^0.165.0"
   },
   "devDependencies": {

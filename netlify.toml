@@ -6,6 +6,10 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["db/**"]
+
 # ── API routes → Netlify Functions (must come before the SPA catch-all) ───────
 [[redirects]]
   from   = "/api/*"
