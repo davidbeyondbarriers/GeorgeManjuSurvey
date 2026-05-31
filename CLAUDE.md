@@ -4,7 +4,7 @@ An emotionally engaging, browser-based survey experience hosted by **George**
 and **Manju** as warm guides. It must feel like a premium interactive
 storytelling website — Apple / Airbnb / Stripe / Notion / Headspace — **not** a
 Google Forms / Typeform / Microsoft Forms clone. Deployed publicly via
-**Netlify**.
+**Cloudflare Workers**.
 
 > Use the **`survey-experience-designer`** skill for all design and build work
 > on this project. This file records the project-specific decisions; the skill
@@ -49,7 +49,7 @@ When an input is missing, state the assumption and proceed.
 | Animation | **GSAP** + ScrollTrigger |
 | Backend (when ready) | **Supabase** (Postgres, auth, storage, realtime) |
 | Analytics | **PostHog** (or Plausible if privacy-first is preferred) |
-| Hosting | **Netlify** |
+| Hosting | **Cloudflare Workers** (Workers Assets for static serving) |
 
 Ship a static, backend-optional build first; wire Supabase later behind a thin
 data layer so the front end doesn't change when persistence lands.
@@ -72,7 +72,8 @@ george-manju-survey/
 │   ├── analytics/          # track() wrapper + event map
 │   ├── persistence/        # localStorage autosave/resume; Supabase adapter
 │   └── three/              # hero 3D scene (lazy)
-├── netlify.toml
+├── wrangler.toml
+├── worker.js
 └── package.json
 ```
 
@@ -114,12 +115,15 @@ insights, challenges, and success stories. Low pressure, generous, human.
 `question_skip`, `drop_off`, `survey_complete`, `completion_time`,
 `device_type` — all through the `track()` wrapper so the tool is swappable.
 
-## Netlify deployment
+## Cloudflare deployment
 
-- Build command: `npm run build` · Publish dir: `dist`
-- Env vars (when backend lands): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
-  `VITE_POSTHOG_KEY`.
-- Add SPA redirect in `netlify.toml` if client routing is used.
+- Deploy: `npm run deploy` (runs `vite build` then `wrangler deploy`)
+- Worker name: `georgemanjusurvey` · Assets dir: `dist`
+- SPA routing: handled by `not_found_handling = "single-page-application"` in `wrangler.toml`
+- Security headers: applied in `worker.js` via `env.ASSETS.fetch()`
+- Env vars baked at build time (set before `npm run build`):
+  `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_POSTHOG_KEY`
+- Runtime secrets: `wrangler secret put SECRET_NAME`
 
 ## Definition of done
 

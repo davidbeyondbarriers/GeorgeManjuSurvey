@@ -1,0 +1,13 @@
+name            = "georgemanjusurvey"
+main            = "worker.js"
+compatibility_date = "2025-05-31"
+
+[assets]
+directory              = "./dist"
+not_found_handling     = "single-page-application"
+
+# ── Environment variables (set secrets via: wrangler secret put VAR_NAME) ─────
+# VITE_* vars are baked into the bundle at build time — set them before `npm run build`
+# Runtime secrets (if you add a Worker API layer later):
+# [vars]
+# ENVIRONMENT = "production"
