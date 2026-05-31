@@ -1,0 +1,187 @@
+/* ============================================================
+   ANIMATIONS  ·  George & Manju Survey
+   All animations respect prefers-reduced-motion via tokens.
+   ============================================================ */
+
+/* ── KEYFRAMES ───────────────────────────────────────────── */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes fade-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+
+@keyframes slide-out-left {
+  from { opacity: 1; transform: translateX(0);     }
+  to   { opacity: 0; transform: translateX(-32px); }
+}
+
+@keyframes slide-out-right {
+  from { opacity: 1; transform: translateX(0);    }
+  to   { opacity: 0; transform: translateX(32px); }
+}
+
+@keyframes spin-gentle {
+  from { transform: rotate(-8deg) scale(1);    }
+  to   { transform: rotate(8deg)  scale(1.08); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(61, 122, 92, 0.4); }
+  50%       { box-shadow: 0 0 20px 6px rgba(61, 122, 92, 0.2); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes confetti-burst {
+  0%   { transform: translateY(0)    scale(1)    rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(-80px) scale(0.5) rotate(360deg); opacity: 0; }
+}
+
+@keyframes progress-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* ── UTILITY ANIMATION CLASSES ───────────────────────────── */
+
+.anim-fade-up {
+  animation: fade-up var(--dur-enter) var(--ease-out) both;
+}
+
+.anim-fade-in {
+  animation: fade-in var(--dur-slow) var(--ease-out) both;
+}
+
+.anim-scale-in {
+  animation: scale-in var(--dur-enter) var(--ease-spring) both;
+}
+
+/* Staggered children: add .anim-stagger-children to parent */
+.anim-stagger-children > * {
+  opacity: 0;
+  animation: fade-up var(--dur-enter) var(--ease-out) both;
+}
+.anim-stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.anim-stagger-children > *:nth-child(2) { animation-delay: 80ms; }
+.anim-stagger-children > *:nth-child(3) { animation-delay: 160ms; }
+.anim-stagger-children > *:nth-child(4) { animation-delay: 240ms; }
+.anim-stagger-children > *:nth-child(5) { animation-delay: 320ms; }
+.anim-stagger-children > *:nth-child(6) { animation-delay: 400ms; }
+
+/* ── QUESTION TRANSITION STATES ──────────────────────────── */
+
+/* Card entering from the right (moving forward) */
+.stage-enter-right {
+  animation: slide-in-right var(--dur-enter) var(--ease-out) both;
+}
+
+/* Card entering from the left (moving back) */
+.stage-enter-left {
+  animation: slide-in-left var(--dur-enter) var(--ease-out) both;
+}
+
+/* Card exiting to the left (moving forward) */
+.stage-exit-left {
+  animation: slide-out-left var(--dur-base) var(--ease-in-out) both;
+}
+
+/* Card exiting to the right (moving back) */
+.stage-exit-right {
+  animation: slide-out-right var(--dur-base) var(--ease-in-out) both;
+}
+
+/* ── HERO BUBBLE STAGGER ─────────────────────────────────── */
+.bubble:nth-child(1) { animation-delay: 600ms; }
+.bubble:nth-child(2) { animation-delay: 1400ms; }
+.bubble:nth-child(3) { animation-delay: 2200ms; }
+
+/* ── SUCCESS MICRO-INTERACTION ───────────────────────────── */
+.choice-btn.is-selected {
+  animation: scale-in var(--dur-fast) var(--ease-spring) both;
+}
+
+/* ── FLOAT for hero elements ────────────────────────────── */
+.anim-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ── CTA pulse for hero ──────────────────────────────────── */
+.hero__cta {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* ── LOADING SHIMMER ─────────────────────────────────────── */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--clr-surface-subtle) 25%,
+    var(--clr-border-subtle)  50%,
+    var(--clr-surface-subtle) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ── CONFETTI PARTICLES (celebration) ───────────────────── */
+.confetti-particle {
+  position: fixed;
+  pointer-events: none;
+  animation: confetti-burst 1.2s ease-out forwards;
+  border-radius: 2px;
+  z-index: var(--z-modal);
+}
+
+/* ── REDUCED MOTION OVERRIDES ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-up,
+  .anim-fade-in,
+  .anim-scale-in,
+  .anim-stagger-children > *,
+  .stage-enter-right,
+  .stage-enter-left,
+  .stage-exit-left,
+  .stage-exit-right,
+  .anim-float,
+  .confetti-particle {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .hero__cta {
+    animation: none;
+  }
+}

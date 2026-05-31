@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+  <meta name="theme-color" content="#0C1829"/>
+  <title>Post-Traumatic Growth Survey</title>
+
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"}}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+
+  <style>
+/* ── TOKENS (mint-green theme) ───────────────────────────── */
+:root{
+  --clr-bg:#F6FAF8;--clr-surface:#fff;--clr-surface-subtle:#EDF5F1;
+  --clr-surface-hero:#060D1A;
+  --clr-primary:#1F6B50;--clr-primary-mid:#2A8B6F;--clr-primary-light:#3ECFA0;
+  --clr-primary-faint:#E6F7F1;
+  --clr-mint:#3ECFA0;--clr-mint-dark:#2A8B6F;--clr-mint-glow:rgba(62,207,160,.35);
+  --clr-warm:#C85C35;--clr-warm-faint:#FDF1EB;
+  --clr-navy:#0C1829;--clr-navy-mid:#112240;
+  --clr-text:#0F1C14;--clr-text-secondary:#3A5444;--clr-text-muted:#7A9B8A;
+  --clr-text-inverse:#fff;
+  --clr-text-hero:rgba(255,255,255,.95);--clr-text-hero-muted:rgba(255,255,255,.65);
+  --clr-border:#C8DDD5;--clr-border-focus:#2A8B6F;--clr-border-subtle:#DDF0E8;
+  --clr-error:#B91C1C;--clr-error-faint:#FEF2F2;
+  --clr-crisis-bg:#FFF9F0;--clr-crisis-border:#F6C470;
+  --clr-crisis-text:#6B3A00;--clr-crisis-heading:#7C3000;
+  --sp-1:.25rem;--sp-2:.5rem;--sp-3:.75rem;--sp-4:1rem;--sp-5:1.25rem;
+  --sp-6:1.5rem;--sp-8:2rem;--sp-10:2.5rem;--sp-12:3rem;--sp-16:4rem;
+  --sp-20:5rem;--sp-24:6rem;
+  --text-xs:clamp(.75rem,1.4vw,.8125rem);--text-sm:clamp(.875rem,1.8vw,.9375rem);
+  --text-base:clamp(1rem,2vw,1.0625rem);--text-lg:clamp(1.125rem,2.4vw,1.25rem);
+  --text-xl:clamp(1.25rem,2.8vw,1.5rem);--text-2xl:clamp(1.5rem,3.5vw,2rem);
+  --text-3xl:clamp(2rem,4.5vw,2.75rem);--text-4xl:clamp(2.5rem,6vw,3.75rem);
+  --leading-tight:1.15;--leading-snug:1.35;--leading-normal:1.6;--leading-relaxed:1.8;
+  --fw-light:300;--fw-regular:400;--fw-medium:500;--fw-semibold:600;--fw-bold:700;
+  --radius-xs:4px;--radius-sm:8px;--radius-md:14px;--radius-lg:22px;
+  --radius-xl:32px;--radius-full:9999px;
+  --shadow-sm:0 2px 8px rgba(0,60,40,.07);
+  --shadow-md:0 6px 20px rgba(0,60,40,.10);
+  --shadow-lg:0 16px 48px rgba(0,60,40,.13);
+  --shadow-xl:0 28px 72px rgba(0,60,40,.16);
+  --shadow-focus:0 0 0 3px rgba(42,139,111,.35);
+  --ease-out:cubic-bezier(.33,1,.68,1);--ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --dur-fast:180ms;--dur-base:280ms;--dur-slow:420ms;--dur-enter:560ms;
+  --survey-width:680px;
+}
+@media(prefers-reduced-motion:reduce){:root{--dur-fast:0ms;--dur-base:0ms;--dur-slow:0ms;--dur-enter:0ms}}
+
+/* ── RESET ─────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'Inter',system-ui,sans-serif;font-size:var(--text-base);
+  color:var(--clr-text);background:var(--clr-bg);
+  -webkit-font-smoothing:antialiased;min-height:100dvh;overflow-x:hidden}
+h1,h2,h3{line-height:var(--leading-tight);font-weight:var(--fw-bold)}
+p{line-height:var(--leading-relaxed)}
+em{font-family:'Lora',Georgia,serif;font-style:italic}
+img,svg{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible{outline:2px solid var(--clr-border-focus);outline-offset:2px;border-radius:var(--radius-xs)}
+:focus:not(:focus-visible){outline:none}
+
+/* ── BUTTONS ─────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  padding:var(--sp-3) var(--sp-6);border-radius:var(--radius-full);
+  font-weight:var(--fw-semibold);font-size:var(--text-sm);white-space:nowrap;
+  transition:background var(--dur-fast),box-shadow var(--dur-fast),transform 80ms var(--ease-out);
+  min-height:44px;min-width:44px;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{box-shadow:var(--shadow-focus);outline:none}
+.btn--primary{background:var(--clr-primary-mid);color:#fff}
+.btn--primary:hover{background:var(--clr-primary);box-shadow:var(--shadow-md)}
+.btn--ghost{background:transparent;color:var(--clr-text-secondary);border:1.5px solid var(--clr-border)}
+.btn--ghost:hover{background:var(--clr-surface-subtle)}
+.btn--text{background:transparent;color:var(--clr-text-muted);padding-inline:var(--sp-3);min-height:36px}
+.btn--text:hover{color:var(--clr-text-secondary)}
+.btn--lg{padding:var(--sp-4) var(--sp-8);font-size:var(--text-base);min-height:52px}
+.badge{display:inline-flex;align-items:center;gap:var(--sp-1);padding:var(--sp-1) var(--sp-3);
+  border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--fw-medium)}
+.badge--subtle{background:rgba(62,207,160,.12);color:var(--clr-primary-mid);
+  border:1px solid rgba(62,207,160,.25)}
+
+/* ── HERO ─────────────────────────────────────────────────── */
+.hero{position:relative;min-height:100dvh;display:flex;align-items:center;
+  justify-content:center;overflow:hidden;background:var(--clr-surface-hero)}
+.hero__canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero__content{position:relative;z-index:10;display:flex;flex-direction:column;
+  align-items:center;text-align:center;padding:var(--sp-8) var(--sp-6);
+  max-width:780px;width:100%;gap:var(--sp-6)}
+
+/* Guide cards — two side by side */
+.hero__guides{display:flex;gap:var(--sp-6);justify-content:center;flex-wrap:wrap}
+.guide-card{display:flex;flex-direction:column;align-items:center;gap:var(--sp-3)}
+.guide-card__photo-wrap{width:clamp(84px,14vw,120px);height:clamp(84px,14vw,120px);
+  border-radius:var(--radius-full);overflow:hidden;
+  border:2px solid rgba(62,207,160,.4);
+  box-shadow:0 0 0 4px rgba(62,207,160,.12),var(--shadow-xl)}
+.guide-card__photo{width:100%;height:100%;object-fit:cover;object-position:center top}
+.guide-card__name{font-size:var(--text-sm);font-weight:var(--fw-semibold);color:var(--clr-text-hero)}
+.guide-card__role{font-size:var(--text-xs);color:var(--clr-text-hero-muted);
+  letter-spacing:.06em;text-transform:uppercase}
+
+/* Chat bubbles */
+.hero__bubbles{display:flex;flex-direction:column;gap:var(--sp-3);width:100%;max-width:500px}
+.bubble{display:flex;align-items:flex-start;gap:var(--sp-2);opacity:0;
+  transform:translateY(10px);
+  transition:opacity var(--dur-enter) var(--ease-out),transform var(--dur-enter) var(--ease-out)}
+.bubble.bubble--visible{opacity:1;transform:translateY(0)}
+.bubble--right{flex-direction:row-reverse}
+.bubble__avatar{font-size:1.2rem;flex-shrink:0;margin-top:2px}
+.bubble__body{background:rgba(62,207,160,.1);backdrop-filter:blur(16px) saturate(1.4);
+  border:1px solid rgba(62,207,160,.2);
+  border-radius:var(--radius-md) var(--radius-md) var(--radius-md) 4px;
+  padding:var(--sp-3) var(--sp-4);text-align:left;max-width:calc(100% - 2rem)}
+.bubble--right .bubble__body{border-radius:var(--radius-md) var(--radius-md) 4px var(--radius-md);text-align:right}
+.bubble__speaker{font-size:var(--text-xs);font-weight:var(--fw-semibold);
+  color:rgba(62,207,160,.8);margin-bottom:2px;letter-spacing:.03em;text-transform:uppercase}
+.bubble__text{font-size:var(--text-sm);color:var(--clr-text-hero);line-height:var(--leading-snug)}
+.hero__title{font-size:var(--text-4xl);font-weight:var(--fw-bold);color:var(--clr-text-hero);
+  letter-spacing:-.025em;text-shadow:0 2px 20px rgba(0,0,0,.3)}
+.hero__subtitle{font-size:var(--text-base);color:var(--clr-text-hero-muted);margin-top:calc(-1*var(--sp-3))}
+.hero__cta{background:var(--clr-mint);color:var(--clr-navy);font-size:var(--text-base);font-weight:var(--fw-bold);
+  padding:var(--sp-4) var(--sp-10);box-shadow:0 4px 32px var(--clr-mint-glow);
+  animation:pulse-glow 3s ease-in-out infinite}
+.hero__cta:hover{background:#52DFB0;box-shadow:0 6px 40px rgba(62,207,160,.5);transform:translateY(-2px) scale(1.02)}
+.hero__reassurance{display:flex;align-items:center;gap:var(--sp-2);
+  font-size:var(--text-xs);color:var(--clr-text-hero-muted);letter-spacing:.03em}
+
+/* ── MOTIVATION ──────────────────────────────────────────── */
+.motivation{padding-block:var(--sp-24) var(--sp-20);background:var(--clr-bg)}
+.motivation__inner{max-width:720px;margin-inline:auto;padding-inline:var(--sp-6);
+  display:flex;flex-direction:column;gap:var(--sp-6)}
+.motivation__eyebrow{font-size:var(--text-xs);font-weight:var(--fw-semibold);
+  text-transform:uppercase;letter-spacing:.1em;color:var(--clr-mint-dark)}
+.motivation__title{font-size:var(--text-3xl);font-weight:var(--fw-bold);
+  letter-spacing:-.02em;color:var(--clr-text)}
+.motivation__body{font-size:var(--text-lg);color:var(--clr-text-secondary);line-height:var(--leading-relaxed)}
+.motivation__meta{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-2)}
+
+/* ── PROGRESS BAR ─────────────────────────────────────────── */
+.progress-bar{position:fixed;top:0;left:0;right:0;z-index:50;height:4px;background:rgba(62,207,160,.15)}
+.progress-bar__fill{height:100%;width:0%;
+  background:linear-gradient(90deg,var(--clr-mint-dark),var(--clr-mint));
+  border-radius:0 var(--radius-full) var(--radius-full) 0;transition:width var(--dur-slow) ease}
+
+/* ── SURVEY ──────────────────────────────────────────────── */
+.survey{background:var(--clr-bg);min-height:100dvh;padding-top:4px}
+.survey__stage{min-height:100dvh;display:flex;flex-direction:column;
+  align-items:center;padding-inline:var(--sp-4);padding-block:var(--sp-16) var(--sp-24)}
+.survey__question-wrap{display:flex;flex-direction:column;align-items:center;gap:var(--sp-4);width:100%}
+
+/* ── CHAPTER INTRO ───────────────────────────────────────── */
+.chapter-intro{display:flex;flex-direction:column;align-items:center;
+  gap:var(--sp-6);max-width:var(--survey-width);width:100%;text-align:center;padding-block:var(--sp-12)}
+.chapter-intro__chapter-badge{display:inline-flex;align-items:center;gap:var(--sp-2);
+  padding:var(--sp-2) var(--sp-4);background:var(--clr-primary-faint);
+  color:var(--clr-primary-mid);border-radius:var(--radius-full);
+  font-size:var(--text-xs);font-weight:var(--fw-semibold);letter-spacing:.06em;text-transform:uppercase}
+.chapter-intro__icon{font-size:2.5rem;line-height:1}
+.chapter-intro__title{font-size:var(--text-2xl);font-weight:var(--fw-bold);
+  letter-spacing:-.02em;color:var(--clr-text)}
+.guide-message{display:flex;align-items:flex-start;gap:var(--sp-3);
+  background:var(--clr-surface);border:1px solid var(--clr-border-subtle);
+  border-radius:var(--radius-lg);padding:var(--sp-5) var(--sp-6);
+  text-align:left;box-shadow:var(--shadow-sm);max-width:480px}
+.guide-message__avatar{width:40px;height:40px;border-radius:var(--radius-full);
+  overflow:hidden;flex-shrink:0;border:2px solid var(--clr-border-subtle)}
+.guide-message__avatar img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.guide-message__name{font-size:var(--text-xs);font-weight:var(--fw-semibold);
+  color:var(--clr-mint-dark);text-transform:uppercase;letter-spacing:.06em;margin-bottom:var(--sp-1)}
+.guide-message__text{font-size:var(--text-base);color:var(--clr-text-secondary);line-height:var(--leading-normal)}
+
+/* ── QUESTION CARD ───────────────────────────────────────── */
+.question-card{background:var(--clr-surface);border:1px solid var(--clr-border-subtle);
+  border-radius:var(--radius-xl);padding:var(--sp-8);width:100%;
+  max-width:var(--survey-width);box-shadow:var(--shadow-md);
+  display:flex;flex-direction:column;gap:var(--sp-6)}
+@media(max-width:480px){.question-card{padding:var(--sp-6) var(--sp-5);border-radius:var(--radius-lg)}}
+.question-card__header{display:flex;flex-direction:column;gap:var(--sp-2)}
+.question-card__label{font-size:var(--text-xl);font-weight:var(--fw-semibold);
+  line-height:var(--leading-snug);letter-spacing:-.01em;color:var(--clr-text)}
+.question-card__hint{font-size:var(--text-sm);color:var(--clr-text-muted)}
+.question-card__required{color:var(--clr-error)}
+
+/* ── SINGLE CHOICE ───────────────────────────────────────── */
+.choice-list{display:flex;flex-direction:column;gap:var(--sp-2);list-style:none}
+.choice-btn{width:100%;display:flex;align-items:center;gap:var(--sp-3);
+  padding:var(--sp-4) var(--sp-5);background:var(--clr-bg);
+  border:1.5px solid var(--clr-border);border-radius:var(--radius-md);
+  font-size:var(--text-base);color:var(--clr-text-secondary);font-weight:var(--fw-medium);
+  text-align:left;min-height:52px;
+  transition:background var(--dur-fast),border-color var(--dur-fast),color var(--dur-fast),box-shadow var(--dur-fast);
+  -webkit-tap-highlight-color:transparent}
+.choice-btn:hover:not(.is-selected){border-color:var(--clr-mint-dark);
+  background:var(--clr-primary-faint);color:var(--clr-primary)}
+.choice-btn.is-selected{border-color:var(--clr-mint-dark);background:var(--clr-primary-faint);
+  color:var(--clr-primary);box-shadow:var(--shadow-focus)}
+.choice-btn:active{transform:scale(.98)}
+.choice-btn__indicator{flex-shrink:0;width:20px;height:20px;border-radius:var(--radius-full);
+  border:2px solid var(--clr-border);background:var(--clr-surface);position:relative;
+  transition:border-color var(--dur-fast),background var(--dur-fast)}
+.choice-btn.is-selected .choice-btn__indicator{border-color:var(--clr-mint-dark);background:var(--clr-mint-dark)}
+.choice-btn.is-selected .choice-btn__indicator::after{content:'';position:absolute;
+  inset:4px;border-radius:var(--radius-full);background:#fff}
+.choice-btn__label{flex:1}
+
+/* ── RATING ──────────────────────────────────────────────── */
+.rating-scale{display:flex;flex-direction:column;gap:var(--sp-4)}
+.rating-scale__track{display:flex;gap:var(--sp-2);justify-content:space-between}
+.rating-btn{flex:1;aspect-ratio:1;min-width:34px;max-width:54px;
+  border-radius:var(--radius-sm);border:1.5px solid var(--clr-border);
+  background:var(--clr-bg);font-size:var(--text-sm);font-weight:var(--fw-semibold);
+  color:var(--clr-text-muted);transition:background var(--dur-fast),border-color var(--dur-fast),
+    color var(--dur-fast),transform 80ms var(--ease-spring)}
+.rating-btn:hover:not(.is-selected){border-color:var(--clr-mint-dark);
+  background:var(--clr-primary-faint);color:var(--clr-primary)}
+.rating-btn.is-selected{color:#fff;transform:scale(1.12);box-shadow:var(--shadow-md)}
+.rating-btn[data-value="1"].is-selected,.rating-btn[data-value="2"].is-selected,
+.rating-btn[data-value="3"].is-selected{background:var(--clr-mint-dark);border-color:var(--clr-mint-dark)}
+.rating-btn[data-value="4"].is-selected,.rating-btn[data-value="5"].is-selected,
+.rating-btn[data-value="6"].is-selected{background:#B8860B;border-color:#B8860B}
+.rating-btn[data-value="7"].is-selected,.rating-btn[data-value="8"].is-selected{background:#C05621;border-color:#C05621}
+.rating-btn[data-value="9"].is-selected,.rating-btn[data-value="10"].is-selected{background:#B91C1C;border-color:#B91C1C}
+.rating-scale__labels{display:flex;justify-content:space-between;
+  font-size:var(--text-xs);color:var(--clr-text-muted)}
+
+/* ── TEXT INPUTS ─────────────────────────────────────────── */
+.text-input,.select-input{width:100%;padding:var(--sp-4) var(--sp-5);background:var(--clr-bg);
+  border:1.5px solid var(--clr-border);border-radius:var(--radius-md);
+  font-size:var(--text-base);color:var(--clr-text);line-height:var(--leading-normal);
+  min-height:52px;-webkit-appearance:none;
+  transition:border-color var(--dur-fast),box-shadow var(--dur-fast)}
+.select-input{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%237A9B8A' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right var(--sp-4) center;padding-right:var(--sp-10)}
+.text-input:focus,.select-input:focus{border-color:var(--clr-border-focus);box-shadow:var(--shadow-focus);outline:none}
+
+/* ── BIRTH DATE (age) ─────────────────────────────────────── */
+.birth-row{display:flex;gap:var(--sp-3);align-items:flex-end}
+.birth-row>*{flex:1}
+.birth-label{font-size:var(--text-xs);font-weight:var(--fw-medium);
+  color:var(--clr-text-muted);margin-bottom:var(--sp-2);display:block}
+.age-reveal{padding:var(--sp-4) var(--sp-5);background:linear-gradient(135deg,var(--clr-primary-faint),rgba(62,207,160,.08));
+  border:1px solid rgba(62,207,160,.25);border-radius:var(--radius-md);
+  text-align:center;min-height:52px;display:flex;align-items:center;justify-content:center}
+.age-reveal__text{font-size:var(--text-base);font-weight:var(--fw-semibold);
+  color:var(--clr-primary);line-height:var(--leading-snug)}
+.age-reveal__sub{font-size:var(--text-xs);color:var(--clr-text-muted);margin-top:2px}
+
+/* ── STORY + SPEECH ──────────────────────────────────────── */
+.story-wrap{display:flex;flex-direction:column;gap:var(--sp-2)}
+.story-toolbar{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2)}
+.mic-btn{display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-4);
+  border-radius:var(--radius-full);border:1.5px solid var(--clr-border);
+  background:var(--clr-bg);font-size:var(--text-xs);font-weight:var(--fw-medium);
+  color:var(--clr-text-secondary);transition:all var(--dur-fast);min-height:36px}
+.mic-btn:hover{border-color:var(--clr-mint-dark);background:var(--clr-primary-faint);color:var(--clr-primary)}
+.mic-btn.is-listening{border-color:#B91C1C;background:#FEF2F2;color:#B91C1C;
+  animation:mic-pulse 1.2s ease-in-out infinite}
+.mic-dot{width:8px;height:8px;border-radius:var(--radius-full);background:currentColor;flex-shrink:0}
+.story-area{width:100%;padding:var(--sp-5) var(--sp-6);background:var(--clr-bg);
+  border:1.5px solid var(--clr-border);border-radius:var(--radius-lg);
+  font-size:var(--text-base);font-family:'Lora',Georgia,serif;
+  line-height:var(--leading-relaxed);resize:vertical;min-height:220px;
+  transition:border-color var(--dur-fast),box-shadow var(--dur-fast)}
+.story-area:focus{border-color:var(--clr-border-focus);box-shadow:var(--shadow-focus);outline:none}
+.story-area::placeholder{color:var(--clr-text-muted);font-style:italic;font-family:'Lora',Georgia,serif}
+.story-wordcount{text-align:right;font-size:var(--text-xs);color:var(--clr-text-muted)}
+.speech-status{font-size:var(--text-xs);color:var(--clr-text-muted);font-style:italic;min-height:18px}
+
+/* ── PIN LOCATION ─────────────────────────────────────────── */
+.pin-location{display:flex;flex-direction:column;gap:var(--sp-3)}
+.pin-autofill{display:flex;gap:var(--sp-3)}
+.pin-autofill-group{flex:1}
+.pin-autofill__label{font-size:var(--text-xs);color:var(--clr-text-muted);margin-bottom:var(--sp-1)}
+.pin-autofill__field{padding:var(--sp-3) var(--sp-4);background:var(--clr-surface-subtle);
+  border:1px solid var(--clr-border-subtle);border-radius:var(--radius-sm);
+  font-size:var(--text-sm);color:var(--clr-text-secondary);min-height:42px;
+  display:flex;align-items:center}
+.pin-loading{opacity:.6;font-style:italic;font-size:var(--text-xs)}
+
+/* ── CONSENT ─────────────────────────────────────────────── */
+.consent-block{display:flex;flex-direction:column;gap:var(--sp-4)}
+.consent-description{padding:var(--sp-4) var(--sp-5);background:var(--clr-primary-faint);
+  border:1px solid rgba(42,139,111,.15);border-radius:var(--radius-md);
+  font-size:var(--text-sm);color:var(--clr-text-secondary)}
+.consent-btns{display:flex;gap:var(--sp-3)}
+.consent-btn{flex:1;padding:var(--sp-4);border:2px solid var(--clr-border);
+  border-radius:var(--radius-md);background:var(--clr-bg);font-size:var(--text-base);
+  font-weight:var(--fw-semibold);color:var(--clr-text-secondary);min-height:52px;
+  transition:all var(--dur-fast)}
+.consent-btn--yes:hover,.consent-btn--yes.is-selected{border-color:var(--clr-mint-dark);
+  background:var(--clr-primary-faint);color:var(--clr-primary-mid);
+  box-shadow:0 0 0 3px rgba(42,139,111,.2)}
+.consent-btn--no:hover,.consent-btn--no.is-selected{border-color:var(--clr-error);
+  background:var(--clr-error-faint);color:var(--clr-error)}
+
+/* ── QUESTION NAV ─────────────────────────────────────────── */
+.question-nav{display:flex;align-items:center;justify-content:space-between;
+  gap:var(--sp-3);width:100%;max-width:var(--survey-width);margin-top:var(--sp-4)}
+.question-nav__back,.question-nav__skip{display:flex;align-items:center;gap:var(--sp-2);
+  font-size:var(--text-sm);color:var(--clr-text-muted);padding:var(--sp-2) var(--sp-3);min-height:44px}
+.question-nav__back:hover,.question-nav__skip:hover{color:var(--clr-text-secondary)}
+.question-nav__next{margin-left:auto}
+.field-error{display:flex;align-items:center;gap:var(--sp-2);font-size:var(--text-sm);
+  color:var(--clr-error);padding:var(--sp-2) var(--sp-3);background:var(--clr-error-faint);border-radius:var(--radius-sm)}
+
+/* ── PROGRESS HUD ─────────────────────────────────────────── */
+.progress-hud{display:flex;align-items:center;justify-content:space-between;
+  gap:var(--sp-4);width:100%;max-width:var(--survey-width);margin-bottom:var(--sp-4)}
+.progress-hud__chapter{font-size:var(--text-xs);font-weight:var(--fw-semibold);
+  color:var(--clr-text-muted);text-transform:uppercase;letter-spacing:.06em}
+.progress-hud__pct{font-size:var(--text-xs);font-weight:var(--fw-semibold);color:var(--clr-mint-dark)}
+.chapter-dots{display:flex;gap:var(--sp-2);align-items:center}
+.chapter-dot{width:8px;height:8px;border-radius:var(--radius-full);background:var(--clr-border);
+  transition:background var(--dur-base),transform var(--dur-base) var(--ease-spring)}
+.chapter-dot.is-active{background:var(--clr-mint-dark);transform:scale(1.35)}
+.chapter-dot.is-done{background:var(--clr-mint)}
+
+/* ── CRISIS — SANTHOSA SAMSARA ───────────────────────────── */
+.crisis-card{background:var(--clr-crisis-bg);border:2px solid var(--clr-crisis-border);
+  border-radius:var(--radius-lg);padding:var(--sp-8);width:100%;max-width:var(--survey-width);
+  display:flex;flex-direction:column;align-items:center;gap:var(--sp-4);text-align:center}
+.crisis-card__icon{font-size:2rem}
+.crisis-card__body{font-size:var(--text-base);color:var(--clr-crisis-text);line-height:var(--leading-normal)}
+.crisis-card__org{font-size:var(--text-lg);font-weight:var(--fw-bold);
+  color:var(--clr-crisis-heading);letter-spacing:.01em}
+.crisis-card__number{font-size:clamp(1.75rem,5vw,2.5rem);font-weight:var(--fw-bold);
+  color:var(--clr-crisis-heading);letter-spacing:.05em;text-decoration:none;
+  display:block;padding:var(--sp-3) var(--sp-6);background:rgba(246,196,112,.2);
+  border-radius:var(--radius-md);border:1.5px solid var(--clr-crisis-border)}
+.crisis-card__number:hover{background:rgba(246,196,112,.35)}
+
+/* ── CELEBRATION ─────────────────────────────────────────── */
+.celebration{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100dvh;padding:var(--sp-12) var(--sp-6);text-align:center;gap:var(--sp-8);
+  background:radial-gradient(ellipse at 50% 30%,rgba(62,207,160,.15) 0%,transparent 60%),
+    linear-gradient(160deg,var(--clr-surface-hero) 0%,#0A2B1E 60%,var(--clr-surface-hero) 100%)}
+.celebration__confetti{font-size:2.5rem;animation:spin-gentle 4s ease-in-out infinite alternate}
+.celebration__guides{display:flex;gap:var(--sp-4);justify-content:center}
+.celebration__guide-photo{width:72px;height:72px;border-radius:var(--radius-full);overflow:hidden;
+  border:2px solid rgba(62,207,160,.4);box-shadow:var(--shadow-lg)}
+.celebration__guide-photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.celebration__title{font-size:var(--text-3xl);font-weight:var(--fw-bold);color:var(--clr-text-hero);
+  letter-spacing:-.02em;max-width:540px}
+.celebration__message{font-size:var(--text-lg);color:var(--clr-text-hero-muted);
+  line-height:var(--leading-relaxed);max-width:540px}
+.celebration__sub{font-size:var(--text-base);color:rgba(62,207,160,.8);
+  font-style:italic;font-family:'Lora',Georgia,serif}
+.celebration__crisis{margin-top:var(--sp-4);max-width:var(--survey-width);width:100%}
+
+/* ── MUSIC PLAYER ─────────────────────────────────────────── */
+.music-player{position:fixed;bottom:var(--sp-6);right:var(--sp-6);z-index:100;
+  display:flex;flex-direction:column;align-items:flex-end;gap:var(--sp-2)}
+.music-toggle{width:48px;height:48px;border-radius:var(--radius-full);
+  background:rgba(10,43,30,.85);backdrop-filter:blur(12px);
+  border:1.5px solid rgba(62,207,160,.35);color:var(--clr-mint);
+  font-size:1.2rem;display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow-lg);transition:all var(--dur-fast);cursor:pointer}
+.music-toggle:hover{background:rgba(42,139,111,.9);border-color:var(--clr-mint);transform:scale(1.05)}
+.music-toggle.is-playing{animation:music-pulse 2s ease-in-out infinite}
+.music-panel{background:rgba(10,43,30,.92);backdrop-filter:blur(16px);
+  border:1px solid rgba(62,207,160,.25);border-radius:var(--radius-lg);
+  padding:var(--sp-4) var(--sp-5);min-width:220px;
+  display:none;flex-direction:column;gap:var(--sp-3);box-shadow:var(--shadow-xl)}
+.music-panel.is-open{display:flex}
+.music-panel__title{font-size:var(--text-xs);font-weight:var(--fw-semibold);
+  color:var(--clr-mint);text-transform:uppercase;letter-spacing:.06em}
+.music-panel__track{font-size:var(--text-sm);color:rgba(255,255,255,.85);line-height:var(--leading-snug)}
+.music-panel__artist{font-size:var(--text-xs);color:rgba(255,255,255,.5)}
+.music-panel__controls{display:flex;align-items:center;gap:var(--sp-3)}
+.music-ctrl{width:36px;height:36px;border-radius:var(--radius-full);
+  background:rgba(62,207,160,.15);border:1px solid rgba(62,207,160,.25);
+  color:var(--clr-mint);font-size:.9rem;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all var(--dur-fast)}
+.music-ctrl:hover{background:rgba(62,207,160,.3)}
+.volume-slider{flex:1;-webkit-appearance:none;height:3px;border-radius:2px;
+  background:rgba(62,207,160,.3);outline:none;cursor:pointer}
+.volume-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;
+  border-radius:var(--radius-full);background:var(--clr-mint);cursor:pointer}
+.music-panel__license{font-size:10px;color:rgba(255,255,255,.3);line-height:1.4}
+
+/* ── ANIMATIONS ──────────────────────────────────────────── */
+@keyframes fade-up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scale-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes slide-in-right{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slide-in-left{from{opacity:0;transform:translateX(-32px)}to{opacity:1;transform:translateX(0)}}
+@keyframes spin-gentle{from{transform:rotate(-8deg) scale(1)}to{transform:rotate(8deg) scale(1.08)}}
+@keyframes pulse-glow{0%,100%{box-shadow:0 4px 32px var(--clr-mint-glow)}50%{box-shadow:0 4px 48px rgba(62,207,160,.6)}}
+@keyframes music-pulse{0%,100%{box-shadow:0 0 0 0 var(--clr-mint-glow)}50%{box-shadow:0 0 0 8px transparent}}
+@keyframes mic-pulse{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes confetti-burst{0%{transform:translateY(0) scale(1) rotate(0deg);opacity:1}100%{transform:translateY(-80px) scale(.5) rotate(360deg);opacity:0}}
+.anim-fade-up{animation:fade-up var(--dur-enter) var(--ease-out) both}
+.anim-scale-in{animation:scale-in var(--dur-enter) var(--ease-spring) both}
+.stage-enter-right{animation:slide-in-right var(--dur-enter) var(--ease-out) both}
+.stage-enter-left{animation:slide-in-left var(--dur-enter) var(--ease-out) both}
+.confetti-particle{position:fixed;pointer-events:none;animation:confetti-burst 1.2s ease-out forwards;border-radius:2px;z-index:200}
+@media(prefers-reduced-motion:reduce){
+  .anim-fade-up,.anim-scale-in,.stage-enter-right,.stage-enter-left,
+  .confetti-particle,.hero__cta,.celebration__confetti{animation:none!important;opacity:1!important;transform:none!important}}
+
+/* ── AURORA / NORTHERN LIGHTS BACKGROUND ──────────────────── */
+.hero{background:#020c12}
+.aurora-wrap{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.aurora-layer{position:absolute;border-radius:50%;filter:blur(60px);opacity:0}
+.aurora-layer-1{width:160%;height:80%;top:20%;left:-30%;
+  background:radial-gradient(ellipse,rgba(0,220,130,.55) 0%,rgba(0,180,100,.25) 40%,transparent 70%);
+  animation:aurora1 18s ease-in-out infinite;animation-delay:0s}
+.aurora-layer-2{width:130%;height:60%;top:10%;left:10%;
+  background:radial-gradient(ellipse,rgba(0,150,220,.4) 0%,rgba(20,200,160,.2) 45%,transparent 70%);
+  animation:aurora2 24s ease-in-out infinite;animation-delay:-6s}
+.aurora-layer-3{width:120%;height:70%;top:30%;left:-10%;
+  background:radial-gradient(ellipse,rgba(100,255,180,.35) 0%,rgba(0,200,100,.15) 50%,transparent 75%);
+  animation:aurora3 20s ease-in-out infinite;animation-delay:-12s}
+.aurora-stars{position:absolute;inset:0;
+  background-image:radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 30% 5%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 50% 20%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 70% 10%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 85% 25%,rgba(255,255,255,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 20% 40%,rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 60% 35%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 90% 45%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 40% 60%,rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 75% 55%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 15% 70%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 55% 75%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 95% 80%,rgba(255,255,255,.3) 0%,transparent 100%);
+  opacity:.8}
+@keyframes aurora1{0%,100%{opacity:.7;transform:translateX(0) scaleY(1) rotate(-2deg)}33%{opacity:.9;transform:translateX(-6%) scaleY(1.15) rotate(1deg)}66%{opacity:.6;transform:translateX(4%) scaleY(0.85) rotate(-1deg)}}
+@keyframes aurora2{0%,100%{opacity:.5;transform:translateX(0) scaleX(1) rotate(2deg)}40%{opacity:.8;transform:translateX(8%) scaleX(1.1) rotate(-2deg)}80%{opacity:.4;transform:translateX(-4%) scaleX(0.9) rotate(1deg)}}
+@keyframes aurora3{0%,100%{opacity:.4;transform:translateY(0) scaleX(1)}50%{opacity:.7;transform:translateY(-5%) scaleX(1.12)}}
+@media(prefers-reduced-motion:reduce){.aurora-layer{animation:none;opacity:.5}}
+
+/* ── BUBBLE AVATAR PHOTO ────────────────────────────────────── */
+.bubble__avatar-photo{width:36px;height:36px;border-radius:var(--radius-full);
+  overflow:hidden;flex-shrink:0;border:1.5px solid rgba(62,207,160,.4);
+  box-shadow:0 0 0 3px rgba(62,207,160,.12)}
+.bubble__avatar-photo img{width:100%;height:100%;object-fit:cover}
+
+/* ── STORY MODE BUTTONS ──────────────────────────────────────── */
+.story-mode-btn{flex:1;padding:var(--sp-3) var(--sp-4);border-radius:var(--radius-md);
+  border:2px solid var(--clr-border);background:var(--clr-bg);
+  font-size:var(--text-sm);color:var(--clr-text-secondary);cursor:pointer;
+  transition:all var(--dur-fast);min-height:48px;text-align:center}
+.story-mode-btn:hover{border-color:var(--clr-mint-dark);background:var(--clr-primary-faint);color:var(--clr-primary)}
+.story-mode-btn--active{border-color:var(--clr-mint-dark);background:var(--clr-primary-faint);
+  color:var(--clr-primary-mid);font-weight:var(--fw-semibold)}
+
+/* ── SPEECH UI ───────────────────────────────────────────────── */
+.speech-instructions{display:flex;flex-direction:column;gap:var(--sp-2);
+  padding:var(--sp-4) var(--sp-5);background:var(--clr-primary-faint);
+  border-radius:var(--radius-md);margin-bottom:var(--sp-3)}
+.speech-instr-step{display:flex;align-items:flex-start;gap:var(--sp-3);
+  font-size:var(--text-sm);color:var(--clr-text-secondary);line-height:var(--leading-snug)}
+.speech-instr-num{display:inline-flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:var(--radius-full);
+  background:var(--clr-primary-mid);color:#fff;font-size:var(--text-xs);
+  font-weight:var(--fw-bold);flex-shrink:0}
+.speech-instr-note{font-size:var(--text-xs);color:var(--clr-text-muted);
+  padding-top:var(--sp-1);border-top:1px solid var(--clr-border-subtle)}
+.speech-live-text{min-height:80px;padding:var(--sp-4);background:var(--clr-bg);
+  border:1.5px dashed var(--clr-border);border-radius:var(--radius-md);
+  font-family:'Lora',Georgia,serif;font-size:var(--text-base);
+  color:var(--clr-text);line-height:var(--leading-relaxed)}
+.speech-status{font-size:var(--text-xs);color:var(--clr-text-muted);font-style:italic;
+  min-height:20px;margin-top:var(--sp-2)}
+  </style>
+</head>
+<body>
+
+<a href="#survey-main" class="sr-only" style="position:absolute">Skip to survey</a>
+<div id="app">
+
+<!-- ── HERO ──────────────────────────────────────────────── -->
+<section id="hero" class="hero" aria-labelledby="hero-title">
+  <!-- Northern Lights aurora effect -->
+  <div class="aurora-wrap" aria-hidden="true">
+    <div class="aurora-stars"></div>
+    <div class="aurora-layer aurora-layer-1"></div>
+    <div class="aurora-layer aurora-layer-2"></div>
+    <div class="aurora-layer aurora-layer-3"></div>
+  </div>
+  <!-- Canvas retained for future Three.js use; hidden by default -->
+  <canvas id="hero-canvas" class="hero__canvas" aria-hidden="true" style="display:none"></canvas>
+  <div class="hero__content">
+
+    <!-- Guide cards — individual photos -->
+    <div class="hero__guides" aria-label="Your guides">
+      <div class="guide-card">
+        <div class="guide-card__photo-wrap">
+          <img src="./public/assets/george-manju.png"
+               alt="George and Manju, your guides" class="guide-card__photo"/>
+        </div>
+        <span class="guide-card__name">George &amp; Manju</span>
+        <span class="guide-card__role">Your Guides</span>
+      </div>
+    </div>
+
+    <div class="hero__bubbles" id="hero-bubbles" aria-live="polite"></div>
+
+    <h1 id="hero-title" class="hero__title">Post-Traumatic Growth Survey</h1>
+    <p class="hero__subtitle">A confidential journey — your voice matters.</p>
+
+    <button id="hero-cta" class="btn btn--lg hero__cta" type="button">
+      Begin Your Journey
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <p class="hero__reassurance">🔒 Anonymous · Confidential · 8–12 minutes</p>
+  </div>
+</section>
+
+<!-- ── MOTIVATION ─────────────────────────────────────────── -->
+<section id="motivation" class="motivation" hidden>
+  <div class="motivation__inner">
+    <p class="motivation__eyebrow">Why this survey matters</p>
+    <h2 class="motivation__title">Your story can change lives.</h2>
+    <p class="motivation__body">When people face adversity — loss, illness, trauma, crisis — something surprising can happen. Beyond surviving, many discover an unexpected kind of growth: deeper relationships, new purpose, and a strength they never knew they had. This is <em>post-traumatic growth</em>.</p>
+    <p class="motivation__body">This research, guided by George and Manju, seeks to understand those journeys. Your honest responses add to knowledge that will help counsellors, researchers, and future participants find their own path forward. There are no right answers. Only your truth.</p>
+    <div class="motivation__meta">
+      <span class="badge badge--subtle">🔒 Fully anonymous</span>
+      <span class="badge badge--subtle">🕐 8–12 minutes</span>
+      <span class="badge badge--subtle">📖 4 short chapters</span>
+    </div>
+    <button id="motivation-cta" class="btn btn--primary btn--lg" type="button" style="width:fit-content">
+      I'm ready — let's begin
+    </button>
+  </div>
+</section>
+
+<!-- ── SURVEY ─────────────────────────────────────────────── -->
+<main id="survey-main" class="survey" hidden>
+  <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar__fill" id="progress-fill"></div>
+  </div>
+  <div id="survey-stage" class="survey__stage"></div>
+</main>
+
+</div><!-- /#app -->
+
+<!-- ── MUSIC PLAYER (floating) ───────────────────────────── -->
+<div class="music-player" id="music-player" role="complementary" aria-label="Background music player">
+  <div class="music-panel" id="music-panel">
+    <p class="music-panel__title">🎵 Ambient Music</p>
+    <div>
+      <p class="music-panel__track" id="music-track-name">Healing</p>
+      <p class="music-panel__artist">Kevin MacLeod · CC BY 3.0</p>
+    </div>
+    <div class="music-panel__controls">
+      <button class="music-ctrl" id="music-prev" aria-label="Previous track" title="Previous">⏮</button>
+      <button class="music-ctrl" id="music-play" aria-label="Play/Pause music" title="Play/Pause" style="font-size:1rem">▶</button>
+      <button class="music-ctrl" id="music-next" aria-label="Next track" title="Next">⏭</button>
+      <input type="range" class="volume-slider" id="music-volume" min="0" max="1" step="0.05" value="0.4" aria-label="Volume"/>
+    </div>
+    <p class="music-panel__license">Music: incompetech.com · Free to use with attribution</p>
+  </div>
+  <button class="music-toggle" id="music-toggle" aria-label="Toggle music player" aria-expanded="false">🎵</button>
+</div>
+
+<audio id="audio-player" loop preload="none"></audio>
+<div id="aria-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+<script type="module">
+// ============================================================
+// SURVEY DATA
+// ============================================================
+const SURVEY_DATA = {"meta":{"title":"Post-Traumatic Growth Survey","estimatedMinutes":10},"guides":{"manju":{"name":"Manju","emoji":"👩"},"george":{"name":"George","emoji":"👨"}},"hero":{"bubbles":[{"guide":"manju","align":"left","text":"Welcome! We're so glad you're here."},{"guide":"george","align":"right","text":"Thank you for taking the time to share your story with us."},{"guide":"manju","align":"left","text":"Everything you share is completely anonymous and protected."}]},"chapters":[{"id":"ch-about","title":"About You","estimatedMinutes":2,"icon":"🌱","intro":{"guide":"manju","text":"Let's start with a few details about you. Everything you share is completely anonymous and used only for research purposes."},"questions":[{"id":"q_dob","type":"birth-date","required":true,"label":"When were you born?","hint":"The age matters to understand the ability of your thinking to make decisions of your story."},{"id":"q_gender","type":"single-choice","required":true,"label":"How do you identify your gender?","options":[{"value":"male","label":"Male"},{"value":"female","label":"Female"},{"value":"non-binary","label":"Non-binary / Gender non-conforming"},{"value":"prefer-not-say","label":"Prefer not to say"},{"value":"self-describe","label":"Prefer to self-describe"}]},{"id":"q_pin","type":"pin-location","required":false,"label":"What is your PIN code?","hint":"Optional — helps us understand the geographic reach of our research.","placeholder":"e.g. 400001"}]},{"id":"ch-journey","title":"Your Journey","estimatedMinutes":3,"icon":"🗺️","intro":{"guide":"george","text":"This chapter touches on experiences that may feel personal. Please take your time — there are no right or wrong answers, and you can skip anything you're not comfortable sharing."},"questions":[{"id":"q_trauma_yn","type":"single-choice","required":true,"label":"Have you experienced a traumatic event?","options":[{"value":"yes","label":"Yes"},{"value":"no","label":"No"},{"value":"prefer-not-say","label":"Prefer not to say"}]},{"id":"q_trauma_type","type":"single-choice","required":false,"label":"What type of trauma have you experienced?","hint":"Select the one that best describes your primary experience.","showIf":{"questionId":"q_trauma_yn","values":["yes"]},"options":[{"value":"accident-injury","label":"Accident or injury"},{"value":"loss-grief","label":"Loss or grief"},{"value":"abuse-violence","label":"Abuse or violence"},{"value":"medical","label":"Medical illness or diagnosis"},{"value":"natural-disaster","label":"Natural disaster"},{"value":"war-conflict","label":"War or conflict"},{"value":"relationship","label":"Relationship trauma"},{"value":"work","label":"Work-related trauma"},{"value":"childhood","label":"Childhood trauma"},{"value":"other","label":"Other"}]},{"id":"q_trauma_year","type":"number","required":false,"label":"Approximately when did this occur?","hint":"Enter the year (e.g. 2018).","placeholder":"e.g. 2019","showIf":{"questionId":"q_trauma_yn","values":["yes"]},"validation":{"min":1924,"max":2026}},{"id":"q_support","type":"single-choice","required":false,"label":"Have you sought professional support?","options":[{"value":"yes-current","label":"Yes — I am currently receiving support"},{"value":"yes-past","label":"Yes — I have received support in the past"},{"value":"no-interested","label":"No — but I am interested in finding support"},{"value":"no","label":"No"},{"value":"prefer-not-say","label":"Prefer not to say"}]},{"id":"q_distress","type":"rating","required":false,"label":"How would you describe your current level of distress?","hint":"1 = no distress at all · 10 = extreme distress","min":1,"max":10,"labelLow":"No distress","labelHigh":"Extreme distress","crisisThreshold":7}]},{"id":"ch-story","title":"Your Story","estimatedMinutes":5,"icon":"📖","intro":{"guide":"manju","text":"This is your space. Share as much or as little as you feel comfortable with. Your words contribute to research that will help others find their own path forward."},"questions":[{"id":"q_story","type":"story","required":false,"label":"Tell us your story","hint":"You might describe your experience, what you've learned, how you've grown, or what you'd want others to know.","placeholder":"Your story begins here…"}]},{"id":"ch-consent","title":"Almost Done","estimatedMinutes":1,"icon":"✓","intro":{"guide":"george","text":"Thank you — you've shared something meaningful. Just one final step before we can receive your responses."},"questions":[{"id":"q_consent","type":"consent","required":true,"label":"I consent to my responses being used anonymously for research purposes.","description":"Your responses will be kept strictly confidential and used only for academic research on post-traumatic growth. No personally identifiable information will ever be shared or published.","confirmLabel":"Yes, I consent","denyLabel":"No, I do not consent"}]}],"completion":{"title":"Thank you, from the bottom of our hearts.","message":"Your story is now part of something larger. This research will help us better understand how people find strength, meaning, and growth after adversity — and ultimately help others on their own journey.","sub":"Every voice matters. Yours does too."}}
+
+const CHAPTERS = SURVEY_DATA.chapters
+const ALL_Q = CHAPTERS.flatMap(c => c.questions)
+
+// ============================================================
+// PERSISTENCE
+// ============================================================
+const SK = 'gm_survey_v2'
+let state = { chapterId:null, questionId:null, responses:{}, history:[], startTime:null, complete:false }
+function saveState(){ try{localStorage.setItem(SK,JSON.stringify({...state,savedAt:Date.now()}))}catch{} }
+function loadState(){ try{const r=localStorage.getItem(SK);if(!r)return null;const s=JSON.parse(r);if(Date.now()-s.savedAt>7*86400000){localStorage.removeItem(SK);return null}return s}catch{return null} }
+function clearState(){ try{localStorage.removeItem(SK)}catch{} }
+
+// ============================================================
+// ADAPTIVE LOGIC
+// ============================================================
+function shouldShow(q,responses){ if(!q.showIf)return true;const v=responses[q.showIf.questionId];if(!v)return false;return Array.isArray(v)?v.some(x=>q.showIf.values.includes(x)):q.showIf.values.includes(v) }
+function getNext(id,responses){ const i=ALL_Q.findIndex(q=>q.id===id);for(let j=i+1;j<ALL_Q.length;j++)if(shouldShow(ALL_Q[j],responses))return ALL_Q[j].id;return null }
+function calcProgress(responses){ const v=ALL_Q.filter(q=>shouldShow(q,responses));if(!v.length)return 0;return Math.round(ALL_Q.filter(q=>shouldShow(q,responses)&&responses[q.id]!=null&&responses[q.id]!=='').length/v.length*100) }
+function chapterFor(qId){ return CHAPTERS.find(c=>c.questions.some(q=>q.id===qId)) }
+function shouldShowCrisis(responses){ const dq=ALL_Q.find(q=>q.crisisThreshold!==undefined);if(!dq)return false;const v=Number(responses[dq.id]);return!isNaN(v)&&v>=dq.crisisThreshold }
+
+// ============================================================
+// AGE CALCULATION
+// ============================================================
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
+function calcAge(month, year){
+  if(!month||!year||year<1900||year>new Date().getFullYear()) return null
+  const today = new Date()
+  const birth = new Date(year, month-1, 1)
+  if(birth > today) return null
+  let yrs = today.getFullYear() - birth.getFullYear()
+  if(today.getMonth() < birth.getMonth()) yrs--
+  const days = Math.floor((today - birth) / 86400000)
+  return { years: yrs, days }
+}
+
+// ============================================================
+// PIN LOOKUP (api.postalpincode.in — free, no key needed)
+// ============================================================
+async function lookupPin(pin){
+  if(pin.length!==6)return null
+  // 1. Try the free India PIN API (works when served over HTTP/HTTPS, not file://)
+  try{
+    const res=await fetch(`https://api.postalpincode.in/pincode/${pin}`,{signal:AbortSignal.timeout(3000)})
+    if(res.ok){
+      const data=await res.json()
+      if(data[0]?.Status==='Success'&&data[0]?.PostOffice?.length){
+        const po=data[0].PostOffice[0]
+        return{city:po.District||po.Name,state:po.State}
+      }
+    }
+  }catch{}
+  // 2. Prefix-based local lookup — covers all major Indian cities
+  const PREFIX_MAP=[
+    ['110','New Delhi','Delhi'],['111','New Delhi','Delhi'],['112','New Delhi','Delhi'],
+    ['400','Mumbai','Maharashtra'],['401','Mumbai','Maharashtra'],
+    ['410','Navi Mumbai','Maharashtra'],['411','Pune','Maharashtra'],
+    ['412','Pune','Maharashtra'],['413','Solapur','Maharashtra'],
+    ['440','Nagpur','Maharashtra'],['441','Nagpur','Maharashtra'],
+    ['380','Ahmedabad','Gujarat'],['382','Ahmedabad','Gujarat'],
+    ['360','Rajkot','Gujarat'],['390','Vadodara','Gujarat'],['395','Surat','Gujarat'],
+    ['500','Hyderabad','Telangana'],['501','Hyderabad','Telangana'],
+    ['502','Hyderabad','Telangana'],['503','Hyderabad','Telangana'],
+    ['530','Visakhapatnam','Andhra Pradesh'],['520','Vijayawada','Andhra Pradesh'],
+    ['560','Bengaluru','Karnataka'],['562','Bengaluru Rural','Karnataka'],
+    ['570','Mysuru','Karnataka'],['575','Mangaluru','Karnataka'],
+    ['600','Chennai','Tamil Nadu'],['601','Chennai','Tamil Nadu'],
+    ['602','Chennai','Tamil Nadu'],['603','Chennai','Tamil Nadu'],
+    ['625','Madurai','Tamil Nadu'],['641','Coimbatore','Tamil Nadu'],
+    ['682','Kochi','Kerala'],['683','Kochi','Kerala'],
+    ['695','Thiruvananthapuram','Kerala'],['678','Palakkad','Kerala'],
+    ['700','Kolkata','West Bengal'],['711','Howrah','West Bengal'],
+    ['712','Hooghly','West Bengal'],['721','Midnapore','West Bengal'],
+    ['800','Patna','Bihar'],['801','Patna','Bihar'],['802','Patna','Bihar'],
+    ['226','Lucknow','Uttar Pradesh'],['227','Lucknow','Uttar Pradesh'],
+    ['208','Kanpur','Uttar Pradesh'],['282','Agra','Uttar Pradesh'],
+    ['221','Varanasi','Uttar Pradesh'],['201','Noida / Ghaziabad','Uttar Pradesh'],
+    ['250','Meerut','Uttar Pradesh'],['302','Jaipur','Rajasthan'],
+    ['313','Udaipur','Rajasthan'],['324','Kota','Rajasthan'],
+    ['160','Chandigarh','Chandigarh'],['141','Ludhiana','Punjab'],
+    ['143','Amritsar','Punjab'],['144','Jalandhar','Punjab'],
+    ['122','Gurugram','Haryana'],['121','Faridabad','Haryana'],
+    ['131','Sonipat','Haryana'],['132','Karnal','Haryana'],
+    ['248','Dehradun','Uttarakhand'],['249','Haridwar','Uttarakhand'],
+    ['781','Guwahati','Assam'],['782','Guwahati','Assam'],
+    ['834','Ranchi','Jharkhand'],['831','Jamshedpur','Jharkhand'],
+    ['751','Bhubaneswar','Odisha'],['753','Cuttack','Odisha'],
+    ['452','Indore','Madhya Pradesh'],['453','Indore','Madhya Pradesh'],
+    ['462','Bhopal','Madhya Pradesh'],['464','Bhopal','Madhya Pradesh'],
+    ['492','Raipur','Chhattisgarh'],['190','Srinagar','Jammu & Kashmir'],
+    ['180','Jammu','Jammu & Kashmir'],['737','Gangtok','Sikkim'],
+    ['793','Shillong','Meghalaya'],['796','Aizawl','Mizoram'],
+    ['744','Port Blair','Andaman & Nicobar'],['605','Puducherry','Puducherry']
+  ]
+  const prefix3=pin.slice(0,3),prefix2=pin.slice(0,2)
+  let match=PREFIX_MAP.find(([p])=>p===prefix3)
+  if(!match)match=PREFIX_MAP.find(([p])=>p===prefix2)
+  if(match)return{city:match[1],state:match[2]}
+  return null
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function setProgress(pct){ const f=document.getElementById('progress-fill');if(f)f.style.width=pct+'%' }
+function announce(msg){ const e=document.getElementById('aria-live');if(!e)return;e.textContent='';requestAnimationFrame(()=>e.textContent=msg) }
+function showSection(el){ el.removeAttribute('hidden');el.style.opacity='0';requestAnimationFrame(()=>{el.style.transition='opacity 420ms ease';el.style.opacity='1';setTimeout(()=>{el.style.transition='';el.style.opacity=''},430)}) }
+function hideSection(el){ return new Promise(r=>{el.style.transition='opacity 280ms ease';el.style.opacity='0';setTimeout(()=>{el.setAttribute('hidden','');el.style.opacity='';el.style.transition='';r()},300)}) }
+function setStage(node,dir='forward'){ const stage=document.getElementById('survey-stage');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){stage.innerHTML='';stage.appendChild(node);return}const cls=dir==='forward'?'stage-enter-right':'stage-enter-left';stage.innerHTML='';node.classList.add(cls);stage.appendChild(node);setTimeout(()=>node.classList.remove(cls),600) }
+
+// ============================================================
+// COMPONENTS
+// ============================================================
+
+// ── Crisis card — Santhosa Samsara ONLY
+function crisisCard(){
+  const el=document.createElement('div');el.className='crisis-card anim-fade-up';el.setAttribute('role','complementary')
+  el.innerHTML=`<div class="crisis-card__icon">💛</div>
+    <p class="crisis-card__body">If you are in distress or need support right now, please reach out. You don't have to face this alone.</p>
+    <p class="crisis-card__org">Santhosa Samsara</p>
+    <a href="tel:18002033545" class="crisis-card__number" aria-label="Call Santhosa Samsara free helpline">1800-203-3545</a>
+    <p class="crisis-card__body" style="font-size:var(--text-xs);color:var(--clr-text-muted)">Toll Free · Available for support</p>`
+  return el
+}
+
+// ── Progress HUD
+function progressHUD(chapter,chIdx,completedIds,pct){
+  const el=document.createElement('div');el.className='progress-hud'
+  const dots=CHAPTERS.map((c,i)=>`<span class="chapter-dot${i===chIdx?' is-active':completedIds.includes(c.id)?' is-done':''}" aria-hidden="true"></span>`).join('')
+  el.innerHTML=`<span class="progress-hud__chapter">${chapter.title}</span><div class="chapter-dots">${dots}</div><span class="progress-hud__pct">${pct}%</span>`
+  return el
+}
+
+// ── Chapter intro
+function chapterIntro(chapter,chIdx,onBegin){
+  const el=document.createElement('div');el.className='chapter-intro anim-fade-up'
+  const guideName=chapter.intro.guide==='george'?'George':'Manju'
+  const guidePhoto=chapter.intro.guide==='george'?'./public/assets/george-manju.png':'./public/assets/george-manju.png'
+  el.innerHTML=`<span class="chapter-intro__chapter-badge">Chapter ${chIdx+1} of ${CHAPTERS.length}</span>
+    <div class="chapter-intro__icon">${chapter.icon}</div>
+    <h2 class="chapter-intro__title">${chapter.title}</h2>
+    <div class="guide-message">
+      <div class="guide-message__avatar"><img src="${guidePhoto}" alt="${guideName}" loading="lazy"/></div>
+      <div><p class="guide-message__name">${guideName}</p><p class="guide-message__text">${chapter.intro.text}</p></div>
+    </div>
+    <p style="font-size:var(--text-sm);color:var(--clr-text-muted)">~${chapter.estimatedMinutes} min</p>
+    <button class="btn btn--primary btn--lg js-begin" type="button">Begin
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>`
+  el.querySelector('.js-begin').addEventListener('click',onBegin,{once:true})
+  return el
+}
+
+// ── Birth date input (month + year → age + days)
+function birthDateInput(question,saved){
+  const el=document.createElement('div')
+  let selMonth=saved?.month||'', selYear=saved?.year||''
+
+  const monthSel=document.createElement('select');monthSel.className='select-input';monthSel.id=`qi-${question.id}-m`
+  monthSel.innerHTML=`<option value="">Month of birth</option>${MONTHS.map((m,i)=>`<option value="${i+1}"${selMonth==i+1?' selected':''}>${m}</option>`).join('')}`
+
+  const yearIn=document.createElement('input');yearIn.type='number';yearIn.className='text-input';yearIn.id=`qi-${question.id}-y`
+  yearIn.placeholder='Year e.g. 1988';yearIn.value=selYear||''
+  yearIn.min=1920;yearIn.max=new Date().getFullYear()-10;yearIn.inputMode='numeric'
+
+  const reveal=document.createElement('div');reveal.className='age-reveal'
+  reveal.innerHTML=`<div><p class="age-reveal__text" id="age-display">—</p><p class="age-reveal__sub">Enter your birth month and year above</p></div>`
+
+  function update(){
+    selMonth=monthSel.value;selYear=yearIn.value
+    const result=calcAge(Number(selMonth),Number(selYear))
+    const disp=reveal.querySelector('#age-display')
+    const sub=reveal.querySelector('.age-reveal__sub')
+    if(result){
+      disp.textContent=`You are ${result.years} years old 🌱`
+      sub.textContent=`${result.days.toLocaleString()} days of life and growing`
+    } else {
+      disp.textContent='—'
+      sub.textContent='Enter your birth month and year above'
+    }
+  }
+  monthSel.addEventListener('change',update);yearIn.addEventListener('input',update)
+  update()
+
+  const row=document.createElement('div');row.className='birth-row'
+  const mWrap=document.createElement('div');mWrap.innerHTML=`<label class="birth-label" for="qi-${question.id}-m">Month</label>`;mWrap.appendChild(monthSel)
+  const yWrap=document.createElement('div');yWrap.innerHTML=`<label class="birth-label" for="qi-${question.id}-y">Year</label>`;yWrap.appendChild(yearIn)
+  row.appendChild(mWrap);row.appendChild(yWrap)
+  el.appendChild(row);el.appendChild(reveal)
+  return {el,getVal:()=>selMonth&&selYear?{month:Number(selMonth),year:Number(selYear)}:null}
+}
+
+// ── Single choice
+function singleChoice(question,saved,onAnswer){
+  const el=document.createElement('ul');el.className='choice-list';el.setAttribute('role','radiogroup')
+  let current=saved
+  question.options.forEach(opt=>{
+    const li=document.createElement('li');li.className='choice-item'
+    const btn=document.createElement('button');btn.type='button'
+    btn.className=`choice-btn${current===opt.value?' is-selected':''}`
+    btn.setAttribute('role','radio');btn.setAttribute('aria-checked',String(current===opt.value))
+    btn.innerHTML=`<span class="choice-btn__indicator" aria-hidden="true"></span><span class="choice-btn__label">${opt.label}</span>`
+    btn.addEventListener('click',()=>{
+      el.querySelectorAll('.choice-btn').forEach(b=>{b.classList.remove('is-selected');b.setAttribute('aria-checked','false')})
+      btn.classList.add('is-selected');btn.setAttribute('aria-checked','true')
+      current=opt.value;onAnswer(opt.value)
+    })
+    li.appendChild(btn);el.appendChild(li)
+  })
+  return{el,getVal:()=>current}
+}
+
+// ── Rating
+function rating(question,saved,onAnswer){
+  const el=document.createElement('div');el.className='rating-scale'
+  const track=document.createElement('div');track.className='rating-scale__track'
+  let current=saved?Number(saved):null
+  for(let i=question.min;i<=question.max;i++){
+    const btn=document.createElement('button');btn.type='button'
+    btn.className=`rating-btn${current===i?' is-selected':''}`;btn.dataset.value=i
+    btn.setAttribute('aria-pressed',String(current===i));btn.setAttribute('aria-label',`${i}`)
+    btn.textContent=i
+    btn.addEventListener('click',()=>{
+      track.querySelectorAll('.rating-btn').forEach(b=>{b.classList.remove('is-selected');b.setAttribute('aria-pressed','false')})
+      btn.classList.add('is-selected');btn.setAttribute('aria-pressed','true')
+      current=i;onAnswer(i)
+    })
+    track.appendChild(btn)
+  }
+  const labels=document.createElement('div');labels.className='rating-scale__labels';labels.setAttribute('aria-hidden','true')
+  labels.innerHTML=`<span>${question.labelLow||'Low'}</span><span>${question.labelHigh||'High'}</span>`
+  el.appendChild(track);el.appendChild(labels)
+  return{el,getVal:()=>current}
+}
+
+// ── Number input
+function numberInput(question,saved){
+  const el=document.createElement('div')
+  const input=document.createElement('input');input.type='number';input.id=`qi-${question.id}`;input.className='text-input'
+  input.placeholder=question.placeholder||'';input.value=saved??''
+  if(question.validation?.min!==undefined)input.min=question.validation.min
+  if(question.validation?.max!==undefined)input.max=question.validation.max
+  input.inputMode='numeric';el.appendChild(input)
+  return{el,getVal:()=>input.value===''?'':Number(input.value)}
+}
+
+// ── PIN location (with live API lookup)
+function pinLocation(question,saved,onAnswer){
+  const el=document.createElement('div');el.className='pin-location'
+  const input=document.createElement('input');input.type='text';input.id=`qi-${question.id}`;input.className='text-input'
+  input.placeholder=question.placeholder||'6-digit PIN';input.maxLength=6;input.inputMode='numeric'
+  const af=document.createElement('div');af.className='pin-autofill';af.setAttribute('aria-live','polite')
+  af.innerHTML=`<div class="pin-autofill-group"><p class="pin-autofill__label">City / District</p><div class="pin-autofill__field" id="pin-city">—</div></div><div class="pin-autofill-group"><p class="pin-autofill__label">State / UT</p><div class="pin-autofill__field" id="pin-state">—</div></div>`
+  let pin='',city='',stateName=''
+  if(saved?.pin){input.value=saved.pin;af.querySelector('#pin-city').textContent=saved.city||'—';af.querySelector('#pin-state').textContent=saved.state||'—';pin=saved.pin;city=saved.city;stateName=saved.state}
+  let debounce
+  input.addEventListener('input',()=>{
+    const raw=input.value.replace(/\D/g,'').slice(0,6);input.value=raw
+    const c=af.querySelector('#pin-city'),s=af.querySelector('#pin-state')
+    clearTimeout(debounce)
+    if(raw.length!==6){c.textContent='—';s.textContent='—';pin=raw;return}
+    c.innerHTML='<span class="pin-loading">Looking up…</span>';s.innerHTML='<span class="pin-loading">…</span>'
+    debounce=setTimeout(async()=>{
+      const lk=await lookupPin(raw)
+      if(lk){c.textContent=lk.city;s.textContent=lk.state;city=lk.city;stateName=lk.state}
+      else{c.textContent='Not found — enter manually';s.textContent=''}
+      pin=raw;onAnswer({pin:raw,city,state:stateName})
+    },600)
+  })
+  el.appendChild(input);el.appendChild(af)
+  return{el,getVal:()=>pin?{pin,city,state:stateName}:null}
+}
+
+// ── Story input with Speech-to-Text
+function storyInput(question,saved){
+  const el=document.createElement('div');el.className='story-wrap'
+
+  // ── Mode selector ─────────────────────────────────────────────────────────
+  const modeRow=document.createElement('div');modeRow.style.cssText='display:flex;gap:var(--sp-3);margin-bottom:var(--sp-4)'
+  const speakBtn=document.createElement('button');speakBtn.type='button'
+  speakBtn.className='story-mode-btn story-mode-btn--active';speakBtn.dataset.mode='speak'
+  speakBtn.innerHTML='&#x1F3A4; <strong>Speak</strong> your story'
+  const typeBtn=document.createElement('button');typeBtn.type='button'
+  typeBtn.className='story-mode-btn';typeBtn.dataset.mode='type'
+  typeBtn.innerHTML='&#x2328; <strong>Type</strong> your story'
+  modeRow.appendChild(speakBtn);modeRow.appendChild(typeBtn);el.appendChild(modeRow)
+
+  // ── Speech panel ──────────────────────────────────────────────────────────
+  const speechPanel=document.createElement('div');speechPanel.className='speech-panel'
+  const SpeechRec=window.SpeechRecognition||window.webkitSpeechRecognition
+  if(SpeechRec){
+    speechPanel.innerHTML='<div class="speech-instructions">'+
+      '<p class="speech-instr-step"><span class="speech-instr-num">1</span>Press <strong>Start Speaking</strong> below to begin</p>'+
+      '<p class="speech-instr-step"><span class="speech-instr-num">2</span>Speak naturally — your words appear in real time</p>'+
+      '<p class="speech-instr-step"><span class="speech-instr-num">3</span>Press <strong>Stop Speaking</strong> when finished</p>'+
+      '<p class="speech-instr-note">Works best in Chrome or Edge. Keep microphone close.</p>'+
+      '</div>'+
+      '<div id="speech-live-text" class="speech-live-text" aria-live="polite"></div>'+
+      '<div style="display:flex;gap:var(--sp-3);margin-top:var(--sp-3)">'+
+        '<button type="button" id="mic-start" class="btn btn--primary">&#x1F3A4; Start Speaking</button>'+
+        '<button type="button" id="mic-stop" class="btn btn--ghost" disabled style="opacity:.5">&#x23F9; Stop Speaking</button>'+
+      '</div>'+
+      '<p id="mic-status" class="speech-status"></p>'
+    el.appendChild(speechPanel)
+    let recognition=null,finalText=''
+    function startSpeech(){
+      recognition=new SpeechRec();recognition.lang='en-IN';recognition.continuous=true;recognition.interimResults=true
+      const liveEl=el.querySelector('#speech-live-text')
+      const startB=el.querySelector('#mic-start')
+      const stopB=el.querySelector('#mic-stop')
+      const statEl=el.querySelector('#mic-status')
+      recognition.onstart=function(){startB.disabled=true;startB.textContent='Recording…';stopB.disabled=false;stopB.style.opacity='1';statEl.textContent='Listening — speak clearly into your microphone'}
+      recognition.onresult=function(e){
+        let interim='';let newFinal=''
+        for(let i=0;i<e.results.length;i++){if(e.results[i].isFinal&&i>=e.resultIndex)newFinal+=e.results[i][0].transcript+' ';else if(!e.results[i].isFinal)interim+=e.results[i][0].transcript}
+        if(newFinal)finalText+=newFinal
+        const display=(finalText+interim).trim()
+        liveEl.textContent=display
+        ta.value=display;updateCount()
+      }
+      recognition.onerror=function(e){statEl.textContent='Mic error: '+e.error+'. Check browser permissions.';startB.disabled=false;startB.innerHTML='&#x1F3A4; Start Speaking';stopB.disabled=true;stopB.style.opacity='.5'}
+      recognition.onend=function(){startB.disabled=false;startB.innerHTML='&#x1F3A4; Start Speaking';stopB.disabled=true;stopB.style.opacity='.5';if(finalText.trim())statEl.textContent='Speech captured. You can edit in Type mode.'}
+      try{recognition.start()}catch(err){statEl.textContent='Could not access microphone. Check browser permissions.'}
+    }
+    el.querySelector('#mic-start').addEventListener('click',startSpeech)
+    el.querySelector('#mic-stop').addEventListener('click',function(){if(recognition)recognition.stop()})
+  } else {
+    speechPanel.innerHTML='<div style="padding:var(--sp-5);background:var(--clr-surface-subtle);border-radius:var(--radius-md);text-align:center"><p style="font-size:var(--text-base);color:var(--clr-text-secondary)">Speech-to-text requires Chrome or Edge browser.</p><p style="font-size:var(--text-sm);color:var(--clr-text-muted);margin-top:var(--sp-2)">Please use Type mode instead.</p></div>'
+    el.appendChild(speechPanel)
+  }
+
+  // ── Type panel ────────────────────────────────────────────────────────────
+  const typePanel=document.createElement('div');typePanel.style.display='none'
+  const ta=document.createElement('textarea');ta.id='qi-'+question.id;ta.className='story-area'
+  ta.placeholder=question.placeholder||'Your story begins here…';ta.rows=9;ta.value=saved||''
+  const wordcountEl=document.createElement('p');wordcountEl.className='story-wordcount';wordcountEl.setAttribute('aria-live','polite')
+  function updateCount(){const w=ta.value.trim().split(/\s+/).filter(Boolean).length;wordcountEl.textContent=w>0?w+' word'+(w===1?'':'s'):''}
+  updateCount();ta.addEventListener('input',updateCount)
+  typePanel.appendChild(ta);typePanel.appendChild(wordcountEl);el.appendChild(typePanel)
+
+  // ── Toggle mode ───────────────────────────────────────────────────────────
+  function setMode(mode){
+    speakBtn.classList.toggle('story-mode-btn--active',mode==='speak')
+    typeBtn.classList.toggle('story-mode-btn--active',mode==='type')
+    speechPanel.style.display=mode==='speak'?'block':'none'
+    typePanel.style.display=mode==='type'?'block':'none'
+  }
+  setMode('speak')
+  speakBtn.addEventListener('click',function(){setMode('speak')})
+  typeBtn.addEventListener('click',function(){setMode('type');ta.focus()})
+
+  return{el,getVal:function(){return ta.value.trim()}}
+}
+
+// ── Consent
+function consentInput(question,saved,onAnswer){
+  const el=document.createElement('div');el.className='consent-block'
+  el.innerHTML=`<div class="consent-description"><p>${question.description}</p></div>`
+  const btns=document.createElement('div');btns.className='consent-btns'
+  let current=saved||null
+  const yes=document.createElement('button');yes.type='button';yes.className=`consent-btn consent-btn--yes${current==='yes'?' is-selected':''}`;yes.setAttribute('aria-pressed',String(current==='yes'));yes.textContent=question.confirmLabel||'Yes, I consent'
+  const no=document.createElement('button');no.type='button';no.className=`consent-btn consent-btn--no${current==='no'?' is-selected':''}`;no.setAttribute('aria-pressed',String(current==='no'));no.textContent=question.denyLabel||'No'
+  const tog=v=>{current=v;yes.classList.toggle('is-selected',v==='yes');no.classList.toggle('is-selected',v==='no');yes.setAttribute('aria-pressed',String(v==='yes'));no.setAttribute('aria-pressed',String(v==='no'));onAnswer(v)}
+  yes.addEventListener('click',()=>tog('yes'));no.addEventListener('click',()=>tog('no'))
+  btns.appendChild(yes);btns.appendChild(no);el.appendChild(btns)
+  return{el,getVal:()=>current}
+}
+
+// ── Celebration
+function celebration(completionTime){
+  const{completion}=SURVEY_DATA
+  const mins=Math.round(completionTime/60)
+  const timeMsg=mins<1?'under a minute':`${mins} minute${mins===1?'':'s'}`
+  const el=document.createElement('div');el.className='celebration';el.setAttribute('role','main')
+  el.innerHTML=`<div class="celebration__confetti" aria-hidden="true">🌱</div>
+    <div class="celebration__guides">
+      <div class="celebration__guide-photo" style="width:100px;height:100px"><img src="./public/assets/george-manju.png" alt="George and Manju" loading="lazy"/></div>
+    </div>
+    <h1 class="celebration__title anim-fade-up">${completion.title}</h1>
+    <p class="celebration__message anim-fade-up" style="animation-delay:150ms">${completion.message}</p>
+    <p class="celebration__sub anim-fade-up" style="animation-delay:300ms">"${completion.sub}"</p>
+    <p class="celebration__message anim-fade-up" style="font-size:var(--text-sm);color:var(--clr-text-hero-muted);animation-delay:400ms">Completed in ${timeMsg}</p>
+    <div class="celebration__crisis">${''}</div>`
+  el.querySelector('.celebration__crisis').appendChild(crisisCard())
+  if(!window.matchMedia('(prefers-reduced-motion:reduce)').matches)confettiBurst()
+  return el
+}
+
+function confettiBurst(){
+  const cols=['#3ECFA0','#2A8B6F','#C85C35','#7B6FA0','#52DFB0','#8EC9A8']
+  const shapes=['■','●','▲','◆','✦']
+  for(let i=0;i<56;i++)setTimeout(()=>{
+    const el=document.createElement('span');el.className='confetti-particle'
+    el.textContent=shapes[Math.floor(Math.random()*shapes.length)]
+    el.style.cssText=`left:${Math.random()*100}vw;top:${20+Math.random()*40}vh;color:${cols[Math.floor(Math.random()*cols.length)]};font-size:${8+Math.random()*12}px;animation-duration:${0.8+Math.random()*0.8}s`
+    document.body.appendChild(el);setTimeout(()=>el.remove(),1600)
+  },Math.random()*700)
+}
+
+// ── Full question card
+function questionCard(question,savedAnswer,onAnswer,onNext,onBack,onSkip){
+  const wrap=document.createElement('div');wrap.className='survey__question-wrap'
+  const card=document.createElement('div');card.className='question-card anim-scale-in';card.setAttribute('role','group');card.setAttribute('aria-labelledby',`ql-${question.id}`)
+  card.innerHTML=`<div class="question-card__header">
+    <label id="ql-${question.id}" class="question-card__label" for="qi-${question.id}">
+      ${question.label}${question.required?'<span class="question-card__required" aria-label="required"> *</span>':''}
+    </label>
+    ${question.hint?`<p class="question-card__hint">${question.hint}</p>`:''}
+  </div>`
+  const inputWrap=document.createElement('div')
+  let getVal
+  if(question.type==='single-choice'){const r=singleChoice(question,savedAnswer,onAnswer);inputWrap.appendChild(r.el);getVal=r.getVal}
+  else if(question.type==='rating'){const r=rating(question,savedAnswer,onAnswer);inputWrap.appendChild(r.el);getVal=r.getVal}
+  else if(question.type==='number'){const r=numberInput(question,savedAnswer);inputWrap.appendChild(r.el);getVal=r.getVal}
+  else if(question.type==='pin-location'){const r=pinLocation(question,savedAnswer,onAnswer);inputWrap.appendChild(r.el);getVal=r.getVal}
+  else if(question.type==='story'){const r=storyInput(question,savedAnswer);inputWrap.appendChild(r.el);getVal=r.getVal}
+  else if(question.type==='consent'){const r=consentInput(question,savedAnswer,onAnswer);inputWrap.appendChild(r.el);getVal=r.getVal}
+  else if(question.type==='birth-date'){const r=birthDateInput(question,savedAnswer);inputWrap.appendChild(r.el);getVal=r.getVal}
+  card.appendChild(inputWrap)
+  const errEl=document.createElement('div');errEl.setAttribute('role','alert');errEl.setAttribute('aria-live','polite')
+  card.appendChild(errEl)
+  wrap.appendChild(card)
+  // Show crisis card if distress threshold hit
+  if(question.crisisThreshold!==undefined&&shouldShowCrisis(state.responses))wrap.appendChild(crisisCard())
+  // Nav
+  const nav=document.createElement('div');nav.className='question-nav'
+  const backBtn=document.createElement('button');backBtn.type='button';backBtn.className='question-nav__back btn--text'
+  backBtn.innerHTML=`<svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16 10H4M9 5l-5 5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Back`
+  backBtn.addEventListener('click',onBack);nav.appendChild(backBtn)
+  if(!question.required){const sk=document.createElement('button');sk.type='button';sk.className='question-nav__skip btn--text';sk.textContent='Skip';sk.addEventListener('click',onSkip);nav.appendChild(sk)}
+  if(!['single-choice'].includes(question.type)){
+    const nxt=document.createElement('button');nxt.type='button';nxt.className='btn btn--primary question-nav__next'
+    nxt.innerHTML=`Continue <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    nxt.addEventListener('click',()=>{
+      const v=getVal();const err=validate(question,v)
+      if(err){errEl.innerHTML=`<div class="field-error">${err}</div>`;return}
+      errEl.innerHTML='';if(v!==null&&v!==undefined&&v!=='')onAnswer(v);onNext()
+    });nav.appendChild(nxt)
+  }
+  wrap.appendChild(nav);return wrap
+}
+
+// ============================================================
+// VALIDATION
+// ============================================================
+function validate(q,v){
+  if(q.required&&(v===null||v===undefined||v===''))return'This question is required — please provide an answer before continuing.'
+  if(q.type==='number'&&v!==''&&v!==null){const n=Number(v);if(isNaN(n))return'Please enter a valid number.';if(q.validation?.min!==undefined&&n<q.validation.min)return`Minimum value is ${q.validation.min}.`;if(q.validation?.max!==undefined&&n>q.validation.max)return`Maximum value is ${q.validation.max}.`}
+  if(q.type==='birth-date'&&q.required&&!v)return'Please enter your birth month and year.'
+  if(q.type==='birth-date'&&v){const r=calcAge(v.month,v.year);if(!r)return'Please enter a valid birth date (must be at least 10 years ago).'}
+  return null
+}
+
+// ============================================================
+// ENGINE
+// ============================================================
+function renderChapterIntro(dir='forward'){
+  const ch=CHAPTERS.find(c=>c.id===state.chapterId);if(!ch)return
+  const idx=CHAPTERS.indexOf(ch)
+  const card=chapterIntro(ch,idx,()=>renderQuestion('forward'))
+  setStage(card,dir);setProgress(calcProgress(state.responses));window.scrollTo({top:0,behavior:'smooth'})
+}
+function renderQuestion(dir='forward'){
+  const q=ALL_Q.find(q=>q.id===state.questionId);if(!q)return
+  const ch=chapterFor(q.id),chIdx=CHAPTERS.indexOf(ch)
+  const completedIds=CHAPTERS.slice(0,Math.max(0,chIdx)).map(c=>c.id)
+  const wrap=document.createElement('div');wrap.className='survey__question-wrap';wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:var(--sp-4);width:100%'
+  wrap.appendChild(progressHUD(ch,chIdx,completedIds,calcProgress(state.responses)))
+  wrap.appendChild(questionCard(q,state.responses[q.id]??null,(val)=>handleAnswer(q.id,val),()=>advance(),()=>goBack(),()=>skip(q.id)))
+  setStage(wrap,dir);announce(`Question: ${q.label}`);window.scrollTo({top:0,behavior:'smooth'})
+}
+function handleAnswer(qId,val){state.responses[qId]=val;saveState();setProgress(calcProgress(state.responses));const q=ALL_Q.find(q=>q.id===qId);if(q?.type==='single-choice')setTimeout(()=>advance(),320)}
+function advance(){const nextId=getNext(state.questionId,state.responses);if(!nextId){completeSurvey();return}state.history.push(state.questionId);const curCh=chapterFor(state.questionId),nextCh=chapterFor(nextId);state.questionId=nextId;state.chapterId=nextCh?.id??state.chapterId;saveState();if(nextCh&&curCh&&nextCh.id!==curCh.id)renderChapterIntro('forward');else renderQuestion('forward');setProgress(calcProgress(state.responses))}
+function goBack(){if(!state.history.length)return;state.questionId=state.history.pop();state.chapterId=chapterFor(state.questionId)?.id??state.chapterId;saveState();renderQuestion('back')}
+function skip(qId){state.responses[qId]=null;advance()}
+function completeSurvey(){state.complete=true;const secs=Math.round((Date.now()-state.startTime)/1000);setProgress(100);clearState();setStage(celebration(secs),'forward');announce('Survey complete — thank you for sharing your story.');window.scrollTo({top:0,behavior:'smooth'})}
+function startSurvey(saved){if(saved&&saved.questionId&&!saved.complete){state={...state,...saved,complete:false};renderQuestion('forward')}else{state.startTime=Date.now();state.questionId=ALL_Q[0]?.id??null;state.chapterId=CHAPTERS[0]?.id??null;renderChapterIntro('forward')}}
+
+// ============================================================
+// MUSIC PLAYER
+// ============================================================
+const TRACKS=[
+  {title:'Amazing Grace',        artist:'Arr. Piano · Public Domain', url:'./public/audio/amazing-grace.mp3',      fallback:'https://archive.org/download/AmazingGrace_201504/AmazingGrace.mp3'},
+  {title:'How Great Thou Art',   artist:'Arr. Strings · Public Domain',url:'./public/audio/how-great-thou-art.mp3',fallback:'https://archive.org/download/HowGreatThouArt_201504/HowGreatThouArt.mp3'},
+  {title:'Be Thou My Vision',    artist:'Arr. Piano · Public Domain', url:'./public/audio/be-thou-my-vision.mp3', fallback:'https://archive.org/download/BeeThouMyVision/BeeThouMyVision.mp3'}
+]
+let trackIdx = 0, musicPlaying = false
+const audioEl    = document.getElementById('audio-player')
+const toggleBtn  = document.getElementById('music-toggle')
+const panel      = document.getElementById('music-panel')
+const playBtn    = document.getElementById('music-play')
+const prevBtn    = document.getElementById('music-prev')
+const nextBtn    = document.getElementById('music-next')
+const volSlider  = document.getElementById('music-volume')
+const trackName  = document.getElementById('music-track-name')
+
+audioEl.volume = 0.4
+
+function loadTrack(idx){
+  trackIdx=idx;const t=TRACKS[idx]
+  trackName.textContent=`${t.title}`
+  audioEl.src=t.url
+  audioEl.onerror=()=>{ if(t.fallback&&audioEl.src!==t.fallback){ audioEl.src=t.fallback; audioEl.load(); if(musicPlaying)audioEl.play().catch(()=>{}) } }
+  if(musicPlaying)audioEl.play().catch(()=>{})
+}
+
+function togglePlay(){
+  if(musicPlaying){audioEl.pause();musicPlaying=false;playBtn.textContent='▶';toggleBtn.classList.remove('is-playing')}
+  else{audioEl.play().then(()=>{musicPlaying=true;playBtn.textContent='⏸';toggleBtn.classList.add('is-playing')}).catch(()=>{musicPlaying=false})}
+}
+
+toggleBtn.addEventListener('click',()=>{
+  const open=panel.classList.toggle('is-open')
+  toggleBtn.setAttribute('aria-expanded',String(open))
+  if(open&&!audioEl.src)loadTrack(0)
+})
+playBtn.addEventListener('click',togglePlay)
+prevBtn.addEventListener('click',()=>loadTrack((trackIdx-1+TRACKS.length)%TRACKS.length))
+nextBtn.addEventListener('click',()=>loadTrack((trackIdx+1)%TRACKS.length))
+volSlider.addEventListener('input',()=>audioEl.volume=volSlider.value)
+audioEl.addEventListener('ended',()=>loadTrack((trackIdx+1)%TRACKS.length))
+
+// ============================================================
+// THREE.JS — SPIRAL GALAXY (mint green)
+// ============================================================
+async function initGalaxy(canvas){
+  if(!canvas)return
+  try{const t=document.createElement('canvas');if(!(t.getContext('webgl')||t.getContext('experimental-webgl')))return}catch{return}
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches)return
+  try{
+    const THREE=await import('three')
+    const{Scene,PerspectiveCamera,WebGLRenderer,BufferGeometry,Float32BufferAttribute,PointsMaterial,Points,Color,AdditiveBlending}=THREE
+    const W=canvas.clientWidth||innerWidth,H=canvas.clientHeight||innerHeight
+    const renderer=new WebGLRenderer({canvas,alpha:true,antialias:false})
+    renderer.setPixelRatio(Math.min(devicePixelRatio,2))
+    renderer.setSize(W,H);renderer.setClearColor(0x000000,0)
+    const scene=new Scene()
+    const camera=new PerspectiveCamera(60,W/H,0.1,1000)
+    camera.position.set(0,8,22)
+    camera.lookAt(0,0,0)
+
+    // Galaxy parameters
+    const COUNT=5000,RADIUS=14,BRANCHES=3,SPIN=1.2,SPREAD=0.28,SPREAD_POWER=3
+    const colorInner=new Color('#3ECFA0') // mint green
+    const colorOuter=new Color('#1a3a5c')  // deep navy
+    const positions=new Float32Array(COUNT*3),colors=new Float32Array(COUNT*3)
+    for(let i=0;i<COUNT;i++){
+      const i3=i*3
+      const r=Math.random()*RADIUS
+      const branch=(i%BRANCHES)/BRANCHES*Math.PI*2
+      const spin=r*SPIN
+      const rx=Math.pow(Math.random(),SPREAD_POWER)*(Math.random()<.5?1:-1)*SPREAD*r
+      const ry=Math.pow(Math.random(),SPREAD_POWER)*(Math.random()<.5?1:-1)*SPREAD*r*.1
+      const rz=Math.pow(Math.random(),SPREAD_POWER)*(Math.random()<.5?1:-1)*SPREAD*r
+      positions[i3]=Math.cos(branch+spin)*r+rx
+      positions[i3+1]=ry
+      positions[i3+2]=Math.sin(branch+spin)*r+rz
+      const mixed=colorInner.clone().lerp(colorOuter,r/RADIUS)
+      // Add occasional bright white/gold stars
+      if(Math.random()<0.05){colors[i3]=1;colors[i3+1]=1;colors[i3+2]=0.85}
+      else{colors[i3]=mixed.r;colors[i3+1]=mixed.g;colors[i3+2]=mixed.b}
+    }
+    const geo=new BufferGeometry()
+    geo.setAttribute('position',new Float32BufferAttribute(positions,3))
+    geo.setAttribute('color',new Float32BufferAttribute(colors,3))
+    const mat=new PointsMaterial({size:.10,vertexColors:true,transparent:true,opacity:.75,blending:AdditiveBlending,depthWrite:false,sizeAttenuation:true})
+    const pts=new Points(geo,mat);scene.add(pts)
+    const onResize=()=>{const w=canvas.clientWidth||innerWidth,h=canvas.clientHeight||innerHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)}
+    window.addEventListener('resize',onResize,{passive:true})
+    let raf
+    const tick=()=>{raf=requestAnimationFrame(tick);pts.rotation.y+=.0006;renderer.render(scene,camera)}
+    tick()
+    new IntersectionObserver(entries=>{if(!entries[0].isIntersecting){cancelAnimationFrame(raf);window.removeEventListener('resize',onResize);renderer.dispose()}}).observe(canvas)
+  }catch{}
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+const heroEl=document.getElementById('hero')
+const motivEl=document.getElementById('motivation')
+const surveyEl=document.getElementById('survey-main')
+
+// Hero bubbles
+const bubblesEl=document.getElementById('hero-bubbles')
+// Photo map for individual guide photos in chat bubbles
+const GUIDE_PHOTOS = {
+  manju:  { src:'./public/assets/Manju_P.jpg',  fallback:'./public/assets/george-manju.png', pos:'left top'  },
+  george: { src:'./public/assets/George_P.jpg', fallback:'./public/assets/george-manju.png', pos:'right top' }
+}
+SURVEY_DATA.hero.bubbles.forEach((b,i)=>{
+  const el=document.createElement('div')
+  el.className=`bubble${b.align==='right'?' bubble--right':''}`;el.setAttribute('role','text')
+  const gp=GUIDE_PHOTOS[b.guide]
+  const avatarHtml=`<div class="bubble__avatar-photo" aria-hidden="true"><img src="${gp.src}" alt="${SURVEY_DATA.guides[b.guide].name}" onerror="this.src='${gp.fallback}'" style="object-position:${gp.pos}"/></div>`
+  el.innerHTML=`${avatarHtml}<div class="bubble__body"><p class="bubble__speaker">${SURVEY_DATA.guides[b.guide].name}</p><p class="bubble__text">${b.text}</p></div>`
+  bubblesEl.appendChild(el)
+  setTimeout(()=>el.classList.add('bubble--visible'),i*700+820)
+})=>el.classList.add('bubble--visible'),i*700+820)
+})
+
+document.getElementById('hero-cta').addEventListener('click',async()=>{await hideSection(heroEl);showSection(motivEl);motivEl.scrollIntoView({behavior:'smooth'})},{once:true})
+document.getElementById('motivation-cta').addEventListener('click',async()=>{
+  await hideSection(motivEl);showSection(surveyEl);surveyEl.scrollIntoView({behavior:'smooth'})
+  const saved=loadState()
+  if(saved&&saved.questionId&&!saved.complete){
+    const banner=document.createElement('div')
+    banner.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--clr-surface);border-top:1px solid var(--clr-border);padding:var(--sp-4) var(--sp-6);display:flex;align-items:center;justify-content:space-between;gap:var(--sp-4);box-shadow:var(--shadow-lg)'
+    banner.innerHTML=`<p style="font-size:var(--text-sm);color:var(--clr-text-secondary);flex:1">👋 You have a survey in progress — pick up where you left off?</p><div style="display:flex;gap:var(--sp-3)"><button class="btn btn--ghost" id="b-no" type="button">Start fresh</button><button class="btn btn--primary" id="b-yes" type="button">Resume</button></div>`
+    document.body.appendChild(banner)
+    const rm=()=>{banner.style.transition='transform 300ms ease';banner.style.transform='translateY(100%)';setTimeout(()=>banner.remove(),320)}
+    document.getElementById('b-yes').addEventListener('click',()=>{rm();startSurvey(saved)},{once:true})
+    document.getElementById('b-no').addEventListener('click',()=>{clearState();rm();startSurvey(null)},{once:true})
+  }else startSurvey(null)
+},{once:true})
+
+initGalaxy(document.getElementById('hero-canvas'))
+loadTrack(0)
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+{
+  "meta": {
+    "title": "Post-Traumatic Growth Survey",
+    "subtitle": "Confidential Research Survey · All responses are anonymous and protected",
+    "estimatedMinutes": 10,
+    "version": "2.0.0"
+  },
+  "guides": {
+    "manju": { "name": "Manju", "emoji": "👩", "photo": "/assets/Manju_P.jpg", "fallback": "/assets/george-manju.png" },
+    "george": { "name": "George", "emoji": "👨", "photo": "/assets/George_P.jpg", "fallback": "/assets/george-manju.png" }
+  },
+  "hero": {
+    "bubbles": [
+      { "guide": "manju", "align": "left",  "text": "Welcome! We're so glad you're here." },
+      { "guide": "george", "align": "right", "text": "Thank you for taking the time to share your story with us." },
+      { "guide": "manju", "align": "left",  "text": "Everything you share is completely anonymous and protected." }
+    ]
+  },
+  "chapters": [
+    {
+      "id": "ch-about",
+      "title": "About You",
+      "estimatedMinutes": 2,
+      "icon": "🌱",
+      "intro": { "guide": "manju", "text": "Let's start with a few details about you. Everything you share is completely anonymous and used only for research purposes." },
+      "questions": [
+        {
+          "id": "q_dob",
+          "type": "birth-date",
+          "required": true,
+          "label": "When were you born?",
+          "hint": "The age matters to understand the ability of your thinking to make decisions of your story."
+        },
+        {
+          "id": "q_gender",
+          "type": "single-choice",
+          "required": true,
+          "label": "How do you identify your gender?",
+          "options": [
+            { "value": "male",           "label": "Male" },
+            { "value": "female",         "label": "Female" },
+            { "value": "non-binary",     "label": "Non-binary / Gender non-conforming" },
+            { "value": "prefer-not-say", "label": "Prefer not to say" },
+            { "value": "self-describe",  "label": "Prefer to self-describe" }
+          ]
+        },
+        {
+          "id": "q_pin",
+          "type": "pin-location",
+          "required": false,
+          "label": "What is your PIN code?",
+          "hint": "Optional — helps us understand the geographic reach of our research.",
+          "placeholder": "e.g. 400001"
+        }
+      ]
+    },
+    {
+      "id": "ch-journey",
+      "title": "Your Journey",
+      "estimatedMinutes": 3,
+      "icon": "🗺️",
+      "intro": { "guide": "george", "text": "This chapter touches on experiences that may feel personal. Please take your time — there are no right or wrong answers, and you can skip anything you're not comfortable sharing." },
+      "questions": [
+        {
+          "id": "q_trauma_yn",
+          "type": "single-choice",
+          "required": true,
+          "label": "Have you experienced a traumatic event?",
+          "options": [
+            { "value": "yes",            "label": "Yes" },
+            { "value": "no",             "label": "No" },
+            { "value": "prefer-not-say", "label": "Prefer not to say" }
+          ]
+        },
+        {
+          "id": "q_trauma_type",
+          "type": "single-choice",
+          "required": false,
+          "label": "What type of trauma have you experienced?",
+          "hint": "Select the one that best describes your primary experience.",
+          "showIf": { "questionId": "q_trauma_yn", "values": ["yes"] },
+          "options": [
+            { "value": "accident-injury",  "label": "Accident or injury" },
+            { "value": "loss-grief",       "label": "Loss or grief" },
+            { "value": "abuse-violence",   "label": "Abuse or violence" },
+            { "value": "medical",          "label": "Medical illness or diagnosis" },
+            { "value": "natural-disaster", "label": "Natural disaster" },
+            { "value": "war-conflict",     "label": "War or conflict" },
+            { "value": "relationship",     "label": "Relationship trauma" },
+            { "value": "work",             "label": "Work-related trauma" },
+            { "value": "childhood",        "label": "Childhood trauma" },
+            { "value": "other",            "label": "Other" }
+          ]
+        },
+        {
+          "id": "q_trauma_year",
+          "type": "number",
+          "required": false,
+          "label": "Approximately when did this occur?",
+          "hint": "Enter the year (e.g. 2018).",
+          "placeholder": "e.g. 2019",
+          "showIf": { "questionId": "q_trauma_yn", "values": ["yes"] },
+          "validation": { "min": 1924, "max": 2026 }
+        },
+        {
+          "id": "q_support",
+          "type": "single-choice",
+          "required": false,
+          "label": "Have you sought professional support?",
+          "options": [
+            { "value": "yes-current",    "label": "Yes — I am currently receiving support" },
+            { "value": "yes-past",       "label": "Yes — I have received support in the past" },
+            { "value": "no-interested",  "label": "No — but I am interested in finding support" },
+            { "value": "no",             "label": "No" },
+            { "value": "prefer-not-say", "label": "Prefer not to say" }
+          ]
+        },
+        {
+          "id": "q_distress",
+          "type": "rating",
+          "required": false,
+          "label": "How would you describe your current level of distress?",
+          "hint": "1 = no distress at all · 10 = extreme distress",
+          "min": 1,
+          "max": 10,
+          "labelLow": "No distress",
+          "labelHigh": "Extreme distress",
+          "crisisThreshold": 7
+        }
+      ]
+    },
+    {
+      "id": "ch-story",
+      "title": "Your Story",
+      "estimatedMinutes": 5,
+      "icon": "📖",
+      "intro": { "guide": "manju", "text": "This is your space. Share as much or as little as you feel comfortable with. Your words contribute to research that will help others find their own path forward." },
+      "questions": [
+        {
+          "id": "q_story",
+          "type": "story",
+          "required": false,
+          "label": "Tell us your story",
+          "hint": "You might describe your experience, what you've learned, how you've grown, or what you'd want others to know. Tap the 🎤 microphone to speak instead of type.",
+          "placeholder": "Your story begins here…"
+        }
+      ]
+    },
+    {
+      "id": "ch-consent",
+      "title": "Almost Done",
+      "estimatedMinutes": 1,
+      "icon": "✓",
+      "intro": { "guide": "george", "text": "Thank you — you've shared something meaningful. Just one final step before we can receive your responses." },
+      "questions": [
+        {
+          "id": "q_consent",
+          "type": "consent",
+          "required": true,
+          "label": "I consent to my responses being used anonymously for research purposes.",
+          "description": "Your responses will be kept strictly confidential and used only for academic research on post-traumatic growth. No personally identifiable information will ever be shared or published.",
+          "confirmLabel": "Yes, I consent",
+          "denyLabel": "No, I do not consent"
+        }
+      ]
+    }
+  ],
+  "completion": {
+    "title": "Thank you, from the bottom of our hearts.",
+    "message": "Your story is now part of something larger. This research will help us better understand how people find strength, meaning, and growth after adversity — and ultimately help others on their own journey.",
+    "sub": "Every voice matters. Yours does too."
+  },
+  "crisisResources": [
+    {
+      "org":    "Santhosa Samsara",
+      "number": "1800-203-3545",
+      "type":   "Toll Free"
+    }
+  ],
+  "music": {
+    "tracks": [
+      { "title": "Healing",           "artist": "Kevin MacLeod", "license": "CC BY 3.0", "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Healing.mp3" },
+      { "title": "Peaceful",          "artist": "Kevin MacLeod", "license": "CC BY 3.0", "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Peaceful.mp3" },
+      { "title": "Meditation 01",     "artist": "Kevin MacLeod", "license": "CC BY 3.0", "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Meditation%20Impromptu%2001.mp3" }
+    ]
+  }
+}
