@@ -1,3 +1,4 @@
-import { neon } from '@neondatabase/serverless'
+import { getDatabase } from '@netlify/database'
 
-export const sql = neon(process.env.NETLIFY_DATABASE_URL)
+const _db = getDatabase()
+export const sql = _db.sql.bind(_db)
