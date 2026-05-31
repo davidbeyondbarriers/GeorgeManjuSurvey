@@ -1174,7 +1174,6 @@ SURVEY_DATA.hero.bubbles.forEach((b,i)=>{
   el.innerHTML=`${avatarHtml}<div class="bubble__body"><p class="bubble__speaker">${SURVEY_DATA.guides[b.guide].name}</p><p class="bubble__text">${b.text}</p></div>`
   bubblesEl.appendChild(el)
   setTimeout(()=>el.classList.add('bubble--visible'),i*700+820)
-})=>el.classList.add('bubble--visible'),i*700+820)
 })
 
 document.getElementById('hero-cta').addEventListener('click',async()=>{await hideSection(heroEl);showSection(motivEl);motivEl.scrollIntoView({behavior:'smooth'})},{once:true})
@@ -1182,17 +1181,17 @@ document.getElementById('motivation-cta').addEventListener('click',async()=>{
   await hideSection(motivEl);showSection(surveyEl);surveyEl.scrollIntoView({behavior:'smooth'})
   const saved=loadState()
   if(saved&&saved.questionId&&!saved.complete){
-    const banner=document.createElement('div')
-    banner.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--clr-surface);border-top:1px solid var(--clr-border);padding:var(--sp-4) var(--sp-6);display:flex;align-items:center;justify-content:space-between;gap:var(--sp-4);box-shadow:var(--shadow-lg)'
-    banner.innerHTML=`<p style="font-size:var(--text-sm);color:var(--clr-text-secondary);flex:1">👋 You have a survey in progress — pick up where you left off?</p><div style="display:flex;gap:var(--sp-3)"><button class="btn btn--ghost" id="b-no" type="button">Start fresh</button><button class="btn btn--primary" id="b-yes" type="button">Resume</button></div>`
+       const banner=document.createElement("div")
+    banner.style.cssText="position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--clr-surface);border-top:1px solid var(--clr-border);padding:var(--sp-4) var(--sp-6);display:flex;align-items:center;justify-content:space-between;gap:var(--sp-4);box-shadow:var(--shadow-lg)"
+    banner.innerHTML="<p style='font-size:var(--text-sm);color:var(--clr-text-secondary);flex:1'>👋 You have a survey in progress — pick up where you left off?</p><div style='display:flex;gap:var(--sp-3)'><button class='btn btn--ghost' id='b-no' type='button'>Start fresh</button><button class='btn btn--primary' id='b-yes' type='button'>Resume</button></div>"
     document.body.appendChild(banner)
-    const rm=()=>{banner.style.transition='transform 300ms ease';banner.style.transform='translateY(100%)';setTimeout(()=>banner.remove(),320)}
-    document.getElementById('b-yes').addEventListener('click',()=>{rm();startSurvey(saved)},{once:true})
-    document.getElementById('b-no').addEventListener('click',()=>{clearState();rm();startSurvey(null)},{once:true})
+    const rm=()=>{banner.style.transition="transform 300ms ease";banner.style.transform="translateY(100%)";setTimeout(()=>banner.remove(),320)}
+    document.getElementById("b-yes").addEventListener("click",()=>{rm();startSurvey(saved)},{once:true})
+    document.getElementById("b-no").addEventListener("click",()=>{clearState();rm();startSurvey(null)},{once:true})
   }else startSurvey(null)
 },{once:true})
 
-initGalaxy(document.getElementById('hero-canvas'))
+initGalaxy(document.getElementById("hero-canvas"))
 loadTrack(0)
 </script>
 </body>
