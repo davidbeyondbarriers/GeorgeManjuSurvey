@@ -7,7 +7,12 @@
 
 import { track } from '../analytics/track.js'
 
-const BUBBLE_DELAY_MS = 700 // gap between each bubble appearing
+const BUBBLE_DELAY_MS = 700
+
+const GUIDE_PHOTOS = {
+  manju:  { src: '/assets/Manju_P.png',  fallback: '/assets/george-manju.png', pos: 'left top'  },
+  george: { src: '/assets/George_P.png', fallback: '/assets/george-manju.png', pos: 'right top' }
+}
 
 /**
  * Initialise the hero section.
@@ -56,6 +61,7 @@ function _renderBubblesStaggered (container, bubbles, guidesData) {
 function _createBubble (bubble, guidesData) {
   const guide = guidesData[bubble.guide]
   const isRight = bubble.align === 'right'
+  const gp = GUIDE_PHOTOS[bubble.guide]
 
   const el = document.createElement('div')
   el.className = `bubble${isRight ? ' bubble--right' : ''}`
@@ -63,7 +69,11 @@ function _createBubble (bubble, guidesData) {
   el.setAttribute('aria-label', `${guide.name}: ${bubble.text}`)
 
   el.innerHTML = `
-    <div class="bubble__avatar" aria-hidden="true">${guide.emoji}</div>
+    <div class="bubble__avatar-photo" aria-hidden="true">
+      <img src="${gp.src}" alt="${guide.name}"
+           onerror="this.src='${gp.fallback}'"
+           style="object-position:${gp.pos}"/>
+    </div>
     <div class="bubble__body">
       <p class="bubble__speaker">${guide.name}</p>
       <p class="bubble__text">${bubble.text}</p>

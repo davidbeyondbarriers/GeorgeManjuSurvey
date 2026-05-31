@@ -7,22 +7,25 @@
   /* ── COLOUR PALETTE ──────────────────────────────────────── */
 
   /* Backgrounds */
-  --clr-bg:              #FAF9F6;   /* Warm off-white */
+  --clr-bg:              #F6FAF8;
   --clr-surface:         #FFFFFF;
-  --clr-surface-subtle:  #F3F1EC;   /* Warmer card background */
-  --clr-surface-hero:    #0C1829;   /* Deep navy for hero */
+  --clr-surface-subtle:  #EDF5F1;
+  --clr-surface-hero:    #060D1A;
 
-  /* Primary — deep trust blue */
-  --clr-primary:         #1E3A5F;
-  --clr-primary-mid:     #2C5282;
-  --clr-primary-light:   #4A7FC1;
-  --clr-primary-faint:   #EBF2FB;
+  /* Primary — deep forest green */
+  --clr-primary:         #1F6B50;
+  --clr-primary-mid:     #2A8B6F;
+  --clr-primary-light:   #3ECFA0;
+  --clr-primary-faint:   #E6F7F1;
 
-  /* Growth accent — sage/forest green */
-  --clr-growth:          #3D7A5C;
-  --clr-growth-mid:      #5A9E7B;
-  --clr-growth-light:    #8EC9A8;
-  --clr-growth-faint:    #EAF6EE;
+  /* Mint accent */
+  --clr-mint:            #3ECFA0;
+  --clr-mint-dark:       #2A8B6F;
+  --clr-mint-glow:       rgba(62, 207, 160, 0.35);
+
+  /* Navy */
+  --clr-navy:            #0C1829;
+  --clr-navy-mid:        #112240;
 
   /* Warmth accent — terracotta */
   --clr-warm:            #C85C35;
@@ -30,55 +33,45 @@
   --clr-warm-light:      #F0A882;
   --clr-warm-faint:      #FDF1EB;
 
-  /* Lavender — mindfulness / calm */
-  --clr-lavender:        #6B5EA8;
-  --clr-lavender-light:  #A599D4;
-  --clr-lavender-faint:  #F0EEFA;
-
   /* Text */
-  --clr-text:            #1A1A2C;
-  --clr-text-secondary:  #50506A;
-  --clr-text-muted:      #9494A6;
+  --clr-text:            #0F1C14;
+  --clr-text-secondary:  #3A5444;
+  --clr-text-muted:      #7A9B8A;
   --clr-text-inverse:    #FFFFFF;
-  --clr-text-hero:       rgba(255,255,255,0.95);
-  --clr-text-hero-muted: rgba(255,255,255,0.65);
+  --clr-text-hero:       rgba(255, 255, 255, 0.95);
+  --clr-text-hero-muted: rgba(255, 255, 255, 0.65);
 
   /* Borders */
-  --clr-border:          #E4E1D8;
-  --clr-border-focus:    #2C5282;
-  --clr-border-subtle:   #EDEAE3;
+  --clr-border:          #C8DDD5;
+  --clr-border-focus:    #2A8B6F;
+  --clr-border-subtle:   #DDF0E8;
 
   /* Status */
-  --clr-success:         #3D7A5C;
-  --clr-success-faint:   #EAF6EE;
+  --clr-success:         #2A8B6F;
+  --clr-success-faint:   #E6F7F1;
   --clr-error:           #B91C1C;
   --clr-error-faint:     #FEF2F2;
 
-  /* Crisis resources */
-  --clr-crisis-bg:       #FFF5F5;
-  --clr-crisis-border:   #FCA5A5;
-  --clr-crisis-text:     #7F1D1D;
-  --clr-crisis-heading:  #991B1B;
-
-  /* Rating scale gradient */
-  --clr-rating-low:      #3D7A5C;   /* calm / low distress */
-  --clr-rating-mid:      #D97706;   /* moderate */
-  --clr-rating-high:     #B91C1C;   /* high distress */
+  /* Crisis resources — warm amber */
+  --clr-crisis-bg:       #FFF9F0;
+  --clr-crisis-border:   #F6C470;
+  --clr-crisis-text:     #6B3A00;
+  --clr-crisis-heading:  #7C3000;
 
   /* ── SPACING (8px grid) ──────────────────────────────────── */
-  --sp-1:   0.25rem;    /*  4px */
-  --sp-2:   0.5rem;     /*  8px */
-  --sp-3:   0.75rem;    /* 12px */
-  --sp-4:   1rem;       /* 16px */
-  --sp-5:   1.25rem;    /* 20px */
-  --sp-6:   1.5rem;     /* 24px */
-  --sp-8:   2rem;       /* 32px */
-  --sp-10:  2.5rem;     /* 40px */
-  --sp-12:  3rem;       /* 48px */
-  --sp-16:  4rem;       /* 64px */
-  --sp-20:  5rem;       /* 80px */
-  --sp-24:  6rem;       /* 96px */
-  --sp-32:  8rem;       /* 128px */
+  --sp-1:   0.25rem;
+  --sp-2:   0.5rem;
+  --sp-3:   0.75rem;
+  --sp-4:   1rem;
+  --sp-5:   1.25rem;
+  --sp-6:   1.5rem;
+  --sp-8:   2rem;
+  --sp-10:  2.5rem;
+  --sp-12:  3rem;
+  --sp-16:  4rem;
+  --sp-20:  5rem;
+  --sp-24:  6rem;
+  --sp-32:  8rem;
 
   /* ── FLUID TYPOGRAPHY ────────────────────────────────────── */
   --text-xs:   clamp(0.75rem,  1.4vw,  0.8125rem);
@@ -89,7 +82,6 @@
   --text-2xl:  clamp(1.5rem,   3.5vw,  2rem);
   --text-3xl:  clamp(2rem,     4.5vw,  2.75rem);
   --text-4xl:  clamp(2.5rem,   6vw,    3.75rem);
-  --text-5xl:  clamp(3rem,     8vw,    5rem);
 
   --leading-tight:   1.15;
   --leading-snug:    1.35;
@@ -103,27 +95,26 @@
   --fw-bold:     700;
 
   /* ── BORDER RADIUS ───────────────────────────────────────── */
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
-  --radius-xl: 32px;
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   22px;
+  --radius-xl:   32px;
   --radius-full: 9999px;
 
-  /* ── SHADOWS ─────────────────────────────────────────────── */
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-  --shadow-md: 0 6px 20px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.05);
-  --shadow-lg: 0 16px 48px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
-  --shadow-xl: 0 28px 72px rgba(0,0,0,0.12), 0 8px 20px rgba(0,0,0,0.07);
-  --shadow-focus: 0 0 0 3px rgba(44, 82, 130, 0.35);
+  /* ── SHADOWS (green-tinted) ──────────────────────────────── */
+  --shadow-sm:          0 2px 8px rgba(0, 60, 40, 0.07);
+  --shadow-md:          0 6px 20px rgba(0, 60, 40, 0.10);
+  --shadow-lg:          0 16px 48px rgba(0, 60, 40, 0.13);
+  --shadow-xl:          0 28px 72px rgba(0, 60, 40, 0.16);
+  --shadow-focus:       0 0 0 3px rgba(42, 139, 111, 0.35);
   --shadow-focus-error: 0 0 0 3px rgba(185, 28, 28, 0.25);
 
   /* ── MOTION ──────────────────────────────────────────────── */
-  --ease-out:       cubic-bezier(0.33, 1, 0.68, 1);
-  --ease-in-out:    cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-smooth:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out:    cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   --dur-instant: 80ms;
   --dur-fast:    180ms;
@@ -133,9 +124,8 @@
   --dur-scene:   900ms;
 
   /* ── LAYOUT ──────────────────────────────────────────────── */
-  --container:         1180px;
-  --survey-width:      680px;
-  --sidebar-width:     260px;
+  --container:    1180px;
+  --survey-width: 680px;
 
   /* ── Z-INDEX ─────────────────────────────────────────────── */
   --z-base:     0;
@@ -146,7 +136,6 @@
   --z-toast:    300;
 }
 
-/* Reduced-motion override — collapse durations to near-zero */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --dur-instant: 0ms;
