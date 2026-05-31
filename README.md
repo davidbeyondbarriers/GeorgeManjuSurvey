@@ -55,58 +55,62 @@ Success is measured by completion rate and participant feedback, not just visual
 
 ```
 george-manju-survey/
-├── index.html                  # Main HTML entry point
-├── preview.html                # Design reference / standalone preview
-├── package.json                # Dependencies & scripts
-├── vite.config.js              # Vite config — port 5200, strictPort
-├── netlify.toml                # Netlify deployment config
+├── CLAUDE.md                        # Project instructions for Claude Code
+├── README.md
+├── TREE.md                          # Full file tree (generated)
+├── ARCHITECTURE.md                  # Why each top-level folder exists
+├── package.json                     # Root package — scripts for all layers
+├── vite.config.js                   # Vite config — root: frontend/, outDir: dist/
+├── .env.example                     # All env vars documented
 │
-├── inputs/                     # Source materials (not committed)
-│   └── assets/
-│       ├── George_P.png        # George individual photo (source)
-│       ├── Manju_P.png         # Manju individual photo (source)
-│       ├── george-manju.png    # Combined guide photo (source)
-│       └── ...
+├── frontend/                        # Vite SPA — everything the browser loads
+│   ├── index.html
+│   ├── preview.html
+│   ├── public/assets/               # Static assets served as-is
+│   └── src/
+│       ├── main.js                  # Boot sequence (hero → motivation → survey)
+│       ├── data/survey.json         # Survey questions, adaptive rules, config
+│       ├── engine/                  # Core render, state, skip logic, navigation
+│       ├── components/              # Hero, chapter-intro, question types, progress, celebration
+│       ├── analytics/track.js       # Event tracking wrapper (PostHog ready)
+│       ├── persistence/autosave.js  # localStorage autosave + API fire-and-forget calls
+│       ├── styles/                  # tokens.css, base.css, components.css, animations.css
+│       └── three/hero-scene.js      # WebGL aurora borealis — GLSL shaders + star field
 │
-├── public/                     # Static assets served as-is
-│   └── assets/
-│       ├── george-manju.png    # Combined guide photo
-│       ├── George_P.png        # George individual photo (bubble avatar)
-│       └── Manju_P.png         # Manju individual photo (bubble avatar)
+├── backend/                         # Express API + database layer
+│   ├── src/
+│   │   ├── server.js                # Express app — migrations on start, serves dist/ in prod
+│   │   ├── db/client.js             # pg.Pool
+│   │   └── routes/                  # session.js, response.js, event.js
+│   ├── db/
+│   │   ├── migrate.js               # Migration runner (also: node backend/db/migrate.js)
+│   │   ├── seed.js                  # Sample data for Adminer verification
+│   │   └── migrations/
+│   │       └── 001_initial_schema.sql
+│   └── tests/
+│       ├── api.contract.test.js     # 14 tests — valid payloads → 202
+│       ├── validation.test.js       # 19 tests — bad payloads → 400
+│       └── db.test.js               # 11 tests — DB persistence (auto-skip without DB)
 │
-└── src/
-    ├── main.js                 # Boot sequence (hero → motivation → survey)
-    │
-    ├── data/
-    │   └── survey.json         # Survey questions, adaptive rules, config
-    │
-    ├── engine/
-    │   ├── survey-engine.js    # Core render & state management
-    │   ├── adaptive-logic.js   # Skip logic, branching, conditional routes
-    │   └── navigation.js       # Section transitions & scrolling
-    │
-    ├── components/
-    │   ├── hero.js             # Hero section, guide cards, chat bubbles
-    │   ├── chapter-intro.js    # Between-chapter George/Manju moments
-    │   ├── crisis.js           # Sensitive content handling
-    │   ├── question-types.js   # Renders all question variants
-    │   ├── progress.js         # Completion %, milestone tracker
-    │   └── celebration.js      # Completion screen & story sharing
-    │
-    ├── analytics/
-    │   └── track.js            # Event tracking wrapper (PostHog ready)
-    │
-    ├── persistence/
-    │   └── autosave.js         # localStorage autosave & Supabase adapter
-    │
-    ├── styles/
-    │   ├── tokens.css          # Design tokens — mint green palette, spacing, motion
-    │   ├── base.css            # Baseline styles, typography, resets
-    │   ├── components.css      # Component styles — aurora layers, bubbles, progress
-    │   └── animations.css      # Keyframes — aurora1/2/3, fade-up, pulse-glow
-    │
-    └── three/
-        └── hero-scene.js       # WebGL aurora borealis — GLSL shaders + star field
+├── infrastructure/
+│   ├── docker/
+│   │   ├── Dockerfile               # 3-stage: dev (nodemon) / build (Vite) / production (slim)
+│   │   ├── docker-compose.yml       # Local: DB + API (hot-reload) + Adminer
+│   │   └── docker-compose.prod.yml  # AWS ECS/RDS reference sketch
+│   ├── cloudflare/
+│   │   ├── worker.js                # Security headers + asset cache
+│   │   └── wrangler.toml            # Worker name, assets dir → ../../dist
+│   └── netlify-archive/             # Legacy (broken) — kept for reference only
+│
+├── docs/
+│   ├── specifications/backend.md    # Full API contract, schema, auth model, NFRs
+│   ├── requirements/                # (placeholder)
+│   ├── architecture/                # (placeholder)
+│   └── deployment/                  # (placeholder)
+│
+└── assets/                          # Source materials — not built, not served
+    ├── brand/                       # George_P.png, Manju_P.png, george-manju.png
+    └── documents/                   # Post_Traumatic_Growth_Survey.docx, TraumaSurvey_Template_v1.xlsx
 ```
 
 ---
@@ -232,28 +236,271 @@ All shadows are green-tinted. All focus rings use `--clr-mint-dark`.
 
 ---
 
-## Deployment
+## Local Development (Docker)
 
-### Netlify
+```bash
+# 1. Copy and edit the environment file
+cp .env.example .env
 
-Push to `main` — Netlify auto-deploys via webhook.
+# 2. Start the full stack — DB + API (hot-reload) + Adminer
+docker compose -f infrastructure/docker/docker-compose.yml up
 
-**`netlify.toml` config:**
-- Build command: `npm run build`
-- Publish directory: `dist/`
-- Node version: 20
-- SPA routing (all paths → index.html)
-- Security headers preconfigured
+# 3. Start the Vite frontend dev server in a second terminal
+npm run dev
+```
+
+| Service | URL |
+|---|---|
+| Frontend (Vite) | http://localhost:5200 |
+| API | http://localhost:3000 |
+| Adminer (DB GUI) | http://localhost:8080 |
+
+Adminer login: **System:** PostgreSQL · **Server:** `db` · **User:** `survey` · **Password:** `survey` · **Database:** `survey`
+
+Migrations run automatically when the API container starts.
+
+To seed sample data: `DATABASE_URL=postgres://survey:survey@localhost:5432/survey npm run seed`.
+
+---
+
+## Testing
+
+```bash
+# Contract + validation tests (no DB required)
+npm test
+
+# With DB (requires docker compose up):
+DATABASE_URL=postgres://survey:survey@localhost:5432/survey npm test
+```
+
+Test files:
+- `backend/tests/api.contract.test.js` — all 4 endpoints return 202 on valid payloads
+- `backend/tests/validation.test.js` — malformed payloads return 400 with `fieldErrors`
+- `backend/tests/db.test.js` — records are persisted correctly in PostgreSQL
+
+---
+
+## Deploy to AWS
+
+This section contains exact commands. Set the four shell variables at the top once;
+all subsequent commands reference them.
+
+```bash
+# ── One-time setup — run these first ──────────────────────────────────────────
+export AWS_REGION=ap-south-1
+export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+export ECR_REPO=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/georgemanjusurvey-api
+export DB_PASSWORD="replace-with-a-strong-password"
+```
+
+### 1. ECR — Container Registry
+
+```bash
+# Create the repository
+aws ecr create-repository \
+  --repository-name georgemanjusurvey-api \
+  --region ${AWS_REGION}
+
+# Authenticate Docker with ECR
+aws ecr get-login-password --region ${AWS_REGION} \
+  | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+
+# Build the production image and push
+docker build -f infrastructure/docker/Dockerfile --target production -t georgemanjusurvey-api .
+docker tag  georgemanjusurvey-api:latest ${ECR_REPO}:latest
+docker push ${ECR_REPO}:latest
+```
+
+### 2. RDS — PostgreSQL 16
+
+```bash
+# Create a DB subnet group first (replace subnet IDs with your private subnets)
+aws rds create-db-subnet-group \
+  --db-subnet-group-name georgemanjusurvey-subnet-group \
+  --db-subnet-group-description "George Manju Survey DB" \
+  --subnet-ids subnet-xxxxxxxxxxxxxxxxx subnet-yyyyyyyyyyyyyyyyy \
+  --region ${AWS_REGION}
+
+# Create the RDS instance (db.t3.micro = ~$15/month, sufficient for survey traffic)
+aws rds create-db-instance \
+  --db-instance-identifier georgemanjusurvey-db \
+  --db-instance-class db.t3.micro \
+  --engine postgres \
+  --engine-version 16 \
+  --master-username survey \
+  --master-user-password ${DB_PASSWORD} \
+  --db-name survey \
+  --allocated-storage 20 \
+  --storage-type gp3 \
+  --vpc-security-group-ids sg-xxxxxxxxxxxxxxxxx \
+  --db-subnet-group-name georgemanjusurvey-subnet-group \
+  --backup-retention-period 7 \
+  --no-publicly-accessible \
+  --region ${AWS_REGION}
+
+# Wait until RDS is available (~5 minutes)
+aws rds wait db-instance-available \
+  --db-instance-identifier georgemanjusurvey-db \
+  --region ${AWS_REGION}
+
+# Get the RDS endpoint
+aws rds describe-db-instances \
+  --db-instance-identifier georgemanjusurvey-db \
+  --query 'DBInstances[0].Endpoint.Address' \
+  --output text \
+  --region ${AWS_REGION}
+
+# Store the connection string in Secrets Manager (used by ECS task)
+export RDS_ENDPOINT=$(aws rds describe-db-instances \
+  --db-instance-identifier georgemanjusurvey-db \
+  --query 'DBInstances[0].Endpoint.Address' \
+  --output text --region ${AWS_REGION})
+
+aws secretsmanager create-secret \
+  --name georgemanjusurvey/database-url \
+  --secret-string "postgres://survey:${DB_PASSWORD}@${RDS_ENDPOINT}:5432/survey" \
+  --region ${AWS_REGION}
+```
+
+### 3. IAM — ECS Task Execution Role
+
+Skip this step if your account already has `ecsTaskExecutionRole`.
+
+```bash
+# Create the role
+aws iam create-role \
+  --role-name ecsTaskExecutionRole \
+  --assume-role-policy-document '{
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Principal": { "Service": "ecs-tasks.amazonaws.com" },
+      "Action": "sts:AssumeRole"
+    }]
+  }'
+
+# Attach the managed policies
+aws iam attach-role-policy \
+  --role-name ecsTaskExecutionRole \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+aws iam attach-role-policy \
+  --role-name ecsTaskExecutionRole \
+  --policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite
+```
+
+### 4. CloudWatch — Log Group
+
+```bash
+aws logs create-log-group \
+  --log-group-name /ecs/georgemanjusurvey-api \
+  --region ${AWS_REGION}
+```
+
+### 5. ECS — Cluster + Task Definition + Service
+
+```bash
+# Create the cluster
+aws ecs create-cluster \
+  --cluster-name georgemanjusurvey \
+  --region ${AWS_REGION}
+
+# Get the secret ARN
+export SECRET_ARN=$(aws secretsmanager describe-secret \
+  --secret-id georgemanjusurvey/database-url \
+  --query ARN --output text --region ${AWS_REGION})
+
+# Register the task definition
+aws ecs register-task-definition \
+  --family georgemanjusurvey-api \
+  --network-mode awsvpc \
+  --requires-compatibilities FARGATE \
+  --cpu 512 \
+  --memory 1024 \
+  --execution-role-arn arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskExecutionRole \
+  --container-definitions "[
+    {
+      \"name\": \"api\",
+      \"image\": \"${ECR_REPO}:latest\",
+      \"portMappings\": [{\"containerPort\": 3000, \"protocol\": \"tcp\"}],
+      \"environment\": [
+        {\"name\": \"PORT\",      \"value\": \"3000\"},
+        {\"name\": \"NODE_ENV\",  \"value\": \"production\"},
+        {\"name\": \"CORS_ORIGIN\",\"value\": \"https://your-survey-domain.com\"}
+      ],
+      \"secrets\": [
+        {\"name\": \"DATABASE_URL\", \"valueFrom\": \"${SECRET_ARN}\"}
+      ],
+      \"healthCheck\": {
+        \"command\": [\"CMD-SHELL\", \"wget -qO- http://localhost:3000/api/health || exit 1\"],
+        \"interval\": 30,
+        \"timeout\": 5,
+        \"retries\": 3,
+        \"startPeriod\": 15
+      },
+      \"logConfiguration\": {
+        \"logDriver\": \"awslogs\",
+        \"options\": {
+          \"awslogs-group\": \"/ecs/georgemanjusurvey-api\",
+          \"awslogs-region\": \"${AWS_REGION}\",
+          \"awslogs-stream-prefix\": \"ecs\"
+        }
+      }
+    }
+  ]" \
+  --region ${AWS_REGION}
+
+# Create the ECS service with an Application Load Balancer target group
+# (create ALB and target group in the console first, or add them here)
+aws ecs create-service \
+  --cluster georgemanjusurvey \
+  --service-name georgemanjusurvey-api \
+  --task-definition georgemanjusurvey-api \
+  --desired-count 1 \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={
+    subnets=[subnet-xxxxxxxxxxxxxxxxx,subnet-yyyyyyyyyyyyyyyyy],
+    securityGroups=[sg-xxxxxxxxxxxxxxxxx],
+    assignPublicIp=ENABLED
+  }" \
+  --region ${AWS_REGION}
+```
+
+### 6. Run Migrations on First Deploy
+
+After the ECS task starts for the first time, migrations run automatically (the API
+server calls `runMigrations()` on startup). Verify by checking CloudWatch logs:
+
+```bash
+aws logs tail /ecs/georgemanjusurvey-api --follow --region ${AWS_REGION}
+```
+
+Look for: `[migrate] ✓ 001_initial_schema.sql` and `[migrate] All migrations up to date`.
+
+### 7. Deploy Updates (push new image)
+
+```bash
+docker build -f infrastructure/docker/Dockerfile --target production -t georgemanjusurvey-api .
+docker tag  georgemanjusurvey-api:latest ${ECR_REPO}:latest
+docker push ${ECR_REPO}:latest
+
+aws ecs update-service \
+  --cluster georgemanjusurvey \
+  --service georgemanjusurvey-api \
+  --force-new-deployment \
+  --region ${AWS_REGION}
+```
 
 ### Environment Variables
 
 Create a `.env` file (not committed):
 
 ```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key
-VITE_POSTHOG_KEY=your_posthog_key
+# Copy .env.example and fill in values
+cp .env.example .env
 ```
+
+See `.env.example` for full documentation of every variable.
 
 ---
 
@@ -269,7 +516,7 @@ WebGL is unavailable in this browser — the CSS animated aurora fallback will s
 The hero scene gracefully degrades to the CSS aurora if WebGL fails. This is expected on some older or low-memory Android devices.
 
 **Autosave not persisting**
-Check localStorage is enabled in browser settings. Clear cache and retest. See `src/persistence/autosave.js`.
+Check localStorage is enabled in browser settings. Clear cache and retest. See `frontend/src/persistence/autosave.js`.
 
 ---
 

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="A confidential research survey exploring how people find strength and growth after adversity. Guided by George and Manju." />
+  <meta name="theme-color" content="#020c12" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Post-Traumatic Growth Survey" />
+  <meta property="og:description" content="Share your story. Help us understand how people grow through adversity." />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>Post-Traumatic Growth Survey</title>
+
+  <!-- Preconnect for fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Styles — order matters: tokens → base → components → animations -->
+  <link rel="stylesheet" href="/src/styles/tokens.css" />
+  <link rel="stylesheet" href="/src/styles/base.css" />
+  <link rel="stylesheet" href="/src/styles/components.css" />
+  <link rel="stylesheet" href="/src/styles/animations.css" />
+</head>
+<body>
+
+  <!-- Skip-to-content for keyboard users -->
+  <a href="#survey-main" class="skip-link">Skip to survey</a>
+
+  <div id="app">
+
+    <!-- ── HERO ─────────────────────────────────────────────────── -->
+    <section id="hero" class="hero" aria-labelledby="hero-title" aria-describedby="hero-desc">
+      <!-- Northern lights aurora background -->
+      <div class="aurora-wrap" aria-hidden="true">
+        <div class="aurora-stars"></div>
+        <div class="aurora-layer aurora-layer-1"></div>
+        <div class="aurora-layer aurora-layer-2"></div>
+        <div class="aurora-layer aurora-layer-3"></div>
+      </div>
+      <canvas id="hero-canvas" class="hero__canvas" aria-hidden="true"></canvas>
+
+      <div class="hero__content">
+        <!-- Guide cards -->
+        <div class="hero__guides" aria-label="Your guides for this survey">
+          <div class="guide-card guide-card--manju" data-guide="manju">
+            <div class="guide-card__photo-wrap">
+              <img src="/assets/george-manju.png" alt="George and Manju" class="guide-card__photo" loading="eager" />
+            </div>
+            <div class="guide-card__names">
+              <span class="guide-card__name">George &amp; Manju</span>
+              <span class="guide-card__role">Your Guides</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat bubbles (filled by hero.js) -->
+        <div class="hero__bubbles" id="hero-bubbles" aria-live="polite"></div>
+
+        <!-- Title -->
+        <h1 id="hero-title" class="hero__title">Post-Traumatic Growth Survey</h1>
+        <p id="hero-desc" class="hero__subtitle">A confidential journey — your voice matters.</p>
+
+        <!-- CTA -->
+        <button id="hero-cta" class="btn btn--primary btn--lg hero__cta" type="button" aria-label="Begin the survey">
+          Begin Your Journey
+          <svg class="btn__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <!-- Reassurance -->
+        <p class="hero__reassurance">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 1L8.5 4.5L12 5l-2.5 2.5.6 3.5L7 9.3 3.9 11l.6-3.5L2 5l3.5-.5L7 1z" fill="currentColor" opacity=".6"/>
+          </svg>
+          Anonymous · Confidential · Takes 8–12 minutes
+        </p>
+      </div>
+    </section>
+
+    <!-- ── MOTIVATION ────────────────────────────────────────────── -->
+    <section id="motivation" class="motivation" aria-labelledby="motivation-title" hidden>
+      <div class="motivation__inner container">
+        <p class="motivation__eyebrow">Why this survey matters</p>
+        <h2 id="motivation-title" class="motivation__title">Your story can change lives.</h2>
+        <p class="motivation__body">
+          When people face adversity — loss, illness, trauma, crisis — something surprising can happen.
+          Beyond surviving, many discover an unexpected kind of growth: deeper relationships, new purpose,
+          and a strength they never knew they had. This is <em>post-traumatic growth</em>.
+        </p>
+        <p class="motivation__body">
+          This research, guided by George and Manju, seeks to understand those journeys.
+          Your honest responses — whatever form they take — add to a body of knowledge
+          that will help counsellors, researchers, and future participants find their own path forward.
+          There are no right answers. Only your truth.
+        </p>
+        <div class="motivation__meta">
+          <span class="badge badge--subtle">🔒 Fully anonymous</span>
+          <span class="badge badge--subtle">🕐 8–12 minutes</span>
+          <span class="badge badge--subtle">📖 4 short chapters</span>
+        </div>
+        <button id="motivation-cta" class="btn btn--primary btn--lg" type="button">
+          I'm ready — let's begin
+        </button>
+      </div>
+    </section>
+
+    <!-- ── SURVEY MAIN ────────────────────────────────────────────── -->
+    <main id="survey-main" class="survey" role="main" aria-label="Survey chapters" hidden>
+
+      <!-- Fixed progress bar -->
+      <div
+        id="progress-bar"
+        class="progress-bar"
+        role="progressbar"
+        aria-valuenow="0"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-label="Survey completion"
+        aria-live="polite"
+      >
+        <div class="progress-bar__fill" id="progress-fill"></div>
+      </div>
+
+      <!-- Chapter + question cards render here -->
+      <div id="survey-stage" class="survey__stage"></div>
+
+    </main>
+
+  </div><!-- /#app -->
+
+  <!-- Screen-reader live region for dynamic announcements -->
+  <div id="aria-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

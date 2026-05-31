@@ -126,7 +126,7 @@ function _renderCurrentQuestion (dir = 'forward') {
     chapter,
     chapterIndex: _chapters.indexOf(chapter),
     chapterCount: _chapters.length,
-    completedChapters: _getCompletedChapterIds(),
+    completedChapterIds: _getCompletedChapterIds(),
     pct: calcProgress(_allQuestions, _state.responses)
   })
   container.appendChild(hud)

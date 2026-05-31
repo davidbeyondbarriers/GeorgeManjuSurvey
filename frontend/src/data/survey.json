@@ -29,7 +29,7 @@
           "type": "birth-date",
           "required": true,
           "label": "When were you born?",
-          "hint": "The age matters to understand the ability of your thinking to make decisions of your story."
+          "hint": "Your age helps us understand the context of your experience."
         },
         {
           "id": "q_gender",
@@ -172,9 +172,9 @@
   },
   "crisisResources": [
     {
-      "org":    "Santhosa Samsara",
+      "name":   "Santhosa Samsara",
       "number": "1800-203-3545",
-      "type":   "Toll Free"
+      "desc":   "Toll Free"
     }
   ],
   "music": {

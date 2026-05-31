@@ -75,6 +75,10 @@ export function renderQuestionCard ({
       const { el, getValue } = _renderPinLocation(question, savedAnswer, onAnswer)
       inputEl = el; getCurrentValue = getValue; break
     }
+    case 'birth-date': {
+      const { el, getValue } = _renderBirthDate(question, savedAnswer)
+      inputEl = el; getCurrentValue = getValue; break
+    }
     case 'story': {
       const { el, getValue } = _renderStory(question, savedAnswer)
       inputEl = el; getCurrentValue = getValue; break
@@ -231,6 +235,133 @@ function _ratingLabel (val, question) {
   return 'Moderate'
 }
 
+// ─── BIRTH DATE ───────────────────────────────────────────────────────────────
+
+const MONTHS = [
+  'January','February','March','April','May','June',
+  'July','August','September','October','November','December'
+]
+
+function _renderBirthDate (question, savedAnswer) {
+  const el = document.createElement('div')
+  el.className = 'birth-date-wrap'
+
+  // ── Month + Year row
+  const fieldsRow = document.createElement('div')
+  fieldsRow.className = 'birth-date-fields'
+
+  // Month select
+  const monthWrap = document.createElement('div')
+  monthWrap.className = 'birth-date-field'
+  const monthLabel = document.createElement('label')
+  monthLabel.className = 'birth-date-field__label'
+  monthLabel.textContent = 'Month'
+  monthLabel.setAttribute('for', `${question.id}-month`)
+  const monthSel = document.createElement('select')
+  monthSel.id = `${question.id}-month`
+  monthSel.className = 'birth-date-select'
+  monthSel.setAttribute('aria-label', 'Birth month')
+  const placeholder = document.createElement('option')
+  placeholder.value = ''
+  placeholder.textContent = 'Select month'
+  placeholder.disabled = true
+  placeholder.selected = true
+  monthSel.appendChild(placeholder)
+  MONTHS.forEach((name, idx) => {
+    const opt = document.createElement('option')
+    opt.value = idx + 1
+    opt.textContent = name
+    monthSel.appendChild(opt)
+  })
+
+  // Year input
+  const yearWrap = document.createElement('div')
+  yearWrap.className = 'birth-date-field'
+  const yearLabel = document.createElement('label')
+  yearLabel.className = 'birth-date-field__label'
+  yearLabel.textContent = 'Year'
+  yearLabel.setAttribute('for', `${question.id}-year`)
+  const yearInput = document.createElement('input')
+  yearInput.type = 'number'
+  yearInput.id = `${question.id}-year`
+  yearInput.className = 'birth-year-input'
+  yearInput.placeholder = 'e.g. 1985'
+  yearInput.min = 1920
+  yearInput.max = new Date().getFullYear() - 10
+  yearInput.inputMode = 'numeric'
+  yearInput.pattern = '[0-9]{4}'
+  if (question.hint) yearInput.setAttribute('aria-describedby', `qh-${question.id}`)
+
+  // Restore saved state
+  let savedMonth = null
+  let savedYear  = null
+  if (savedAnswer && typeof savedAnswer === 'object') {
+    savedMonth = savedAnswer.month
+    savedYear  = savedAnswer.year
+    if (savedMonth) monthSel.value = savedMonth
+    if (savedYear)  yearInput.value = savedYear
+  }
+
+  // ── Days on planet display
+  const daysEl = document.createElement('div')
+  daysEl.className = 'days-on-planet'
+  daysEl.setAttribute('aria-live', 'polite')
+  daysEl.setAttribute('aria-atomic', 'true')
+  if (savedMonth && savedYear) _updateDays(savedMonth, savedYear, daysEl)
+
+  function _updateDays (month, year, target) {
+    if (!month || !year || year < 1920 || year > new Date().getFullYear()) {
+      target.innerHTML = ''
+      return
+    }
+    const birth = new Date(year, month - 1, 15) // approximate mid-month
+    const today = new Date()
+    if (birth > today) { target.innerHTML = ''; return }
+    const days = Math.floor((today - birth) / 86400000)
+    const years = Math.floor(days / 365.25)
+    target.innerHTML = `
+      <div class="days-on-planet__inner">
+        <span class="days-on-planet__emoji" aria-hidden="true">🌍</span>
+        <div>
+          <strong class="days-on-planet__count">${days.toLocaleString()}</strong>
+          <span class="days-on-planet__label"> days on this planet</span>
+          <span class="days-on-planet__years">&nbsp;·&nbsp;${years} years of lived experience</span>
+        </div>
+      </div>
+    `
+  }
+
+  const onFieldChange = () => {
+    const m = monthSel.value ? Number(monthSel.value) : null
+    const y = yearInput.value.length === 4 ? Number(yearInput.value) : null
+    if (m) savedMonth = m
+    if (y) savedYear  = y
+    _updateDays(savedMonth, savedYear, daysEl)
+  }
+
+  monthSel.addEventListener('change', onFieldChange)
+  yearInput.addEventListener('input', onFieldChange)
+
+  monthWrap.appendChild(monthLabel)
+  monthWrap.appendChild(monthSel)
+  yearWrap.appendChild(yearLabel)
+  yearWrap.appendChild(yearInput)
+  fieldsRow.appendChild(monthWrap)
+  fieldsRow.appendChild(yearWrap)
+  el.appendChild(fieldsRow)
+  el.appendChild(daysEl)
+
+  return {
+    el,
+    getValue: () => {
+      const m = monthSel.value ? Number(monthSel.value) : null
+      const y = yearInput.value.length === 4 ? Number(yearInput.value) : null
+      if (!m && !y) return null
+      return { month: m, year: y, monthName: m ? MONTHS[m - 1] : null }
+    }
+  }
+}
+
 // ─── NUMBER ───────────────────────────────────────────────────────────────────
 
 function _renderNumber (question, savedAnswer) {
@@ -327,10 +458,51 @@ function _renderPinLocation (question, savedAnswer, onAnswer) {
 
 // ─── STORY ────────────────────────────────────────────────────────────────────
 
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+
 function _renderStory (question, savedAnswer) {
   const el = document.createElement('div')
   el.style.cssText = 'display:flex;flex-direction:column;gap:var(--sp-2);'
 
+  // ── STT toolbar (mic button + status)
+  const sttBar = document.createElement('div')
+  sttBar.className = 'stt-bar'
+
+  const micBtn = document.createElement('button')
+  micBtn.type = 'button'
+  micBtn.className = 'stt-mic-btn'
+  micBtn.setAttribute('aria-label', 'Start voice input')
+  micBtn.innerHTML = `
+    <svg class="stt-mic-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="9" y="2" width="6" height="12" rx="3" stroke="currentColor" stroke-width="2"/>
+      <path d="M5 10a7 7 0 0014 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="stt-mic-label">Speak your story</span>
+  `
+
+  const sttStatus = document.createElement('div')
+  sttStatus.className = 'stt-status'
+  sttStatus.setAttribute('aria-live', 'polite')
+  sttStatus.setAttribute('aria-atomic', 'true')
+
+  const sttHint = document.createElement('p')
+  sttHint.className = 'stt-hint'
+  if (!SpeechRecognition) {
+    sttHint.textContent = 'Voice input requires Chrome or Edge.'
+    micBtn.disabled = true
+    micBtn.classList.add('stt-mic-btn--disabled')
+  } else {
+    sttHint.textContent = 'Tap the mic to speak — your words will appear in the text box.'
+  }
+
+  sttBar.appendChild(micBtn)
+  sttBar.appendChild(sttStatus)
+  el.appendChild(sttBar)
+  el.appendChild(sttHint)
+
+  // ── Textarea
   const textarea = document.createElement('textarea')
   textarea.id          = `qi-${question.id}`
   textarea.className   = 'story-area'
@@ -354,6 +526,79 @@ function _renderStory (question, savedAnswer) {
 
   el.appendChild(textarea)
   el.appendChild(wordcount)
+
+  // ── Web Speech API wiring
+  if (SpeechRecognition) {
+    let recognition = null
+    let isListening = false
+    let interimSpan = null
+
+    const setListening = (active) => {
+      isListening = active
+      micBtn.classList.toggle('stt-mic-btn--active', active)
+      micBtn.setAttribute('aria-label', active ? 'Stop voice input' : 'Start voice input')
+      micBtn.querySelector('.stt-mic-label').textContent = active ? 'Stop listening' : 'Speak your story'
+      sttStatus.innerHTML = active
+        ? `<span class="stt-listening-badge">
+             <span class="stt-pulse" aria-hidden="true"></span>Listening…
+           </span>`
+        : ''
+    }
+
+    micBtn.addEventListener('click', () => {
+      if (isListening) {
+        recognition?.stop()
+        return
+      }
+
+      recognition = new SpeechRecognition()
+      recognition.lang       = 'en-IN'  // Indian English
+      recognition.continuous = true
+      recognition.interimResults = true
+      recognition.maxAlternatives = 1
+
+      recognition.onstart = () => setListening(true)
+
+      recognition.onresult = (e) => {
+        let interim = ''
+        let final   = ''
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const t = e.results[i][0].transcript
+          if (e.results[i].isFinal) final += t + ' '
+          else interim += t
+        }
+        if (final) {
+          // Append confirmed text to textarea
+          textarea.value += final
+          updateCount()
+          // Remove any interim indicator
+          if (interimSpan) { interimSpan.remove(); interimSpan = null }
+        }
+        // Show interim as a floating preview in status
+        if (interim) {
+          sttStatus.innerHTML = `
+            <span class="stt-listening-badge">
+              <span class="stt-pulse" aria-hidden="true"></span>Listening…
+            </span>
+            <span class="stt-interim">${interim}</span>`
+        }
+      }
+
+      recognition.onerror = (e) => {
+        setListening(false)
+        const msgs = {
+          'not-allowed': 'Microphone permission denied. Please allow microphone access.',
+          'no-speech':   'No speech detected — tap the mic and try again.',
+          'network':     'Network error. Check your connection and try again.'
+        }
+        sttStatus.innerHTML = `<span class="stt-error">${msgs[e.error] || 'Voice input error — please try again.'}</span>`
+      }
+
+      recognition.onend = () => setListening(false)
+
+      recognition.start()
+    })
+  }
 
   return { el, getValue: () => textarea.value.trim() }
 }
@@ -462,6 +707,18 @@ function _renderNav ({ question, onBack, onSkip, onNext }) {
 // ─── VALIDATION ───────────────────────────────────────────────────────────────
 
 function _validate (question, value) {
+  if (question.type === 'birth-date') {
+    if (question.required && (!value || (!value.month && !value.year))) {
+      return 'Please select your birth month and enter your birth year.'
+    }
+    if (value && value.year && (value.year < 1920 || value.year > new Date().getFullYear() - 10)) {
+      return `Please enter a valid birth year between 1920 and ${new Date().getFullYear() - 10}.`
+    }
+    if (value && value.month && !value.year) return 'Please enter your birth year.'
+    if (value && value.year && !value.month) return 'Please select your birth month.'
+    return null
+  }
+
   if (question.required && (value === null || value === undefined || value === '')) {
     return 'This question is required — please provide an answer before continuing.'
   }

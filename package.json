@@ -1,19 +1,30 @@
 {
   "name": "george-manju-survey",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Post-Traumatic Growth Survey — a premium, chapter-based storytelling experience",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "deploy": "npm run build && wrangler deploy"
+    "dev":       "vite",
+    "build":     "vite build",
+    "preview":   "vite preview",
+    "deploy":    "npm run build && wrangler deploy --config infrastructure/cloudflare/wrangler.toml",
+    "api:dev":   "nodemon --watch backend/src --watch backend/db --ext js,json backend/src/server.js",
+    "api:start": "node backend/src/server.js",
+    "migrate":   "node backend/db/migrate.js",
+    "seed":      "node backend/db/seed.js",
+    "test":      "node --test backend/tests/api.contract.test.js backend/tests/validation.test.js backend/tests/db.test.js"
   },
   "dependencies": {
-    "three": "^0.165.0"
+    "cors":    "^2.8.5",
+    "express": "^4.19.2",
+    "helmet":  "^7.1.0",
+    "pg":      "^8.12.0",
+    "three":   "^0.165.0",
+    "zod":     "^3.23.8"
   },
   "devDependencies": {
-    "vite": "^5.3.1",
+    "nodemon":  "^3.1.4",
+    "vite":     "^5.3.1",
     "wrangler": "^3.114.17"
   }
 }

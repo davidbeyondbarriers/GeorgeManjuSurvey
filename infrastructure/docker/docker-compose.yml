@@ -1,0 +1,58 @@
+# Local development stack: PostgreSQL 16 + Express API (hot-reload) + Adminer
+#
+# Usage:
+#   docker compose -f infrastructure/docker/docker-compose.yml up
+#   docker compose -f infrastructure/docker/docker-compose.yml up -d
+#   docker compose -f infrastructure/docker/docker-compose.yml down -v  # stop + wipe DB volume
+#
+# After starting:
+#   API:     http://localhost:3000
+#   Adminer: http://localhost:8080  (System: PostgreSQL, Server: db, User: survey, Password: survey, DB: survey)
+#   Vite:    run `npm run dev` in a separate terminal (proxies /api → localhost:3000)
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER:     survey
+      POSTGRES_PASSWORD: survey
+      POSTGRES_DB:       survey
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:     ["CMD-SHELL", "pg_isready -U survey -d survey"]
+      interval: 5s
+      timeout:  5s
+      retries:  10
+
+  api:
+    build:
+      context:    ../..
+      dockerfile: infrastructure/docker/Dockerfile
+      target:     dev
+    volumes:
+      - ../../backend/src:/app/backend/src  # hot-reload: edit API files without rebuild
+      - ../../backend/db:/app/backend/db    # hot-reload: edit migrations/seed without rebuild
+      - /app/node_modules                   # keep container's node_modules separate
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://survey:survey@db:5432/survey
+      PORT:         3000
+      NODE_ENV:     development
+      CORS_ORIGIN:  http://localhost:5200
+    depends_on:
+      db:
+        condition: service_healthy
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

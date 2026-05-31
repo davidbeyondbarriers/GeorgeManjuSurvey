@@ -1,0 +1,39 @@
+# Production sketch — maps to AWS ECS Fargate + RDS PostgreSQL
+#
+# This file is NOT used directly in production. It documents how the local
+# docker-compose.yml translates to AWS resources. See README.md for exact
+# AWS CLI commands.
+#
+# AWS mapping:
+#   db      → AWS RDS PostgreSQL 16 (not in ECS — managed service)
+#   api     → AWS ECS Fargate task (georgemanjusurvey-api)
+#   adminer → not deployed to production
+#
+# Replace all <PLACEHOLDER> values before running.
+
+services:
+  api:
+    image: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/georgemanjusurvey-api:latest
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV:     production
+      PORT:         3000
+      # In production, pull DATABASE_URL from AWS Secrets Manager
+      # via the ECS task definition's secrets block — do NOT hardcode here.
+      DATABASE_URL: postgres://<DB_USER>:<DB_PASS>@<RDS_ENDPOINT>:5432/survey
+      CORS_ORIGIN:  https://<YOUR_SURVEY_DOMAIN>
+    healthcheck:
+      test:         ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval:     30s
+      timeout:      5s
+      start_period: 15s
+      retries:      3
+    # ECS Fargate task resources (set in task definition):
+    #   cpu:    512     (0.5 vCPU)
+    #   memory: 1024    (1 GB)
+    deploy:
+      resources:
+        limits:
+          cpus:   '0.5'
+          memory: 1G

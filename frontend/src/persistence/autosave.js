@@ -1,12 +1,15 @@
 /**
- * Persistence — localStorage autosave + Netlify Functions DB layer
+ * Persistence — localStorage autosave + Express API DB layer
  *
  * localStorage is the primary store (always works, survives offline).
  * API calls to /api/* are fire-and-forget — they never block or break the survey.
- * The DB layer activates automatically on Netlify; it's a no-op in local dev
- * where NETLIFY_DATABASE_URL is not set.
+ *
+ * VITE_API_URL: set to the API server origin (e.g. http://localhost:3000) when
+ * running the Vite dev server separately from Docker. Leave empty for same-origin
+ * production builds where Express serves both the API and the frontend.
  */
 
+const BASE_URL    = import.meta.env.VITE_API_URL || ''
 const STORAGE_KEY = 'gm_survey_v1'
 const TOKEN_KEY   = 'gm_session_token'
 
@@ -56,7 +59,7 @@ function getOrCreateToken () {
 
 function _post (path, body) {
   try {
-    fetch(path, {
+    fetch(`${BASE_URL}${path}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -67,7 +70,7 @@ function _post (path, body) {
 
 function _patch (path, body) {
   try {
-    fetch(path, {
+    fetch(`${BASE_URL}${path}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
